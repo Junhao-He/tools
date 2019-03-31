@@ -1,6 +1,6 @@
 package sam.znv.view;
 
-import sam.znv.TestPro;
+import sam.znv.controller.SendController;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -57,7 +57,7 @@ public class OutPutPanel extends JPanel {
         sendBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                TestPro.sendIdx1(filepath);
+                SendController.sendIdx1(filepath);
                 System.out.println("发送：" + filepath);
 			}
 		});

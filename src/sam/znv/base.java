@@ -2,6 +2,7 @@ package sam.znv;
 
 import com.znv.door.SendDoorThread;
 import com.znv.vehicle.SendVehicleThread;
+import sam.znv.controller.SendController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -110,6 +111,7 @@ public class base extends JFrame {
         Button_doorStart.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		SendDoorThread.filepath =filepath;
+				SendController.sendIdx1(filepath);
         	}
         });
         Button_doorStart.setBounds(38, 259, 93, 23);

@@ -17,7 +17,7 @@
  * @version 1.0
  * @author MHm
  */
-package sam.znv;
+package sam.znv.kafka;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,12 +86,11 @@ public final class ZKafkaProducter {
     /**
      * 发送数据到kafka
      * 
-     * @param topicConfig 在配置文件的配置项
      * @param message 发送的消息
      */
-    public void sendMessage(String topicConfig, JSONObject message) {
+    public void sendMessage(JSONObject message, Long sendcount, Long countpersencond) {
 
-        String topic = properties.getProperty(topicConfig);
+        String topic = properties.getProperty("kafka.topic");
 
         if (Strings.isEmpty(topic)) {
             return;
@@ -108,8 +107,11 @@ public final class ZKafkaProducter {
             }
         });*/
         ProducerRecord<String, JSONObject> data = new ProducerRecord(topic, null, message);
-        Future<RecordMetadata> res =  producer.send(data);
+
+
+        Future<RecordMetadata> res = producer.send(data);
         System.out.println(res.isDone());
+
 //        producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
     }
     /**
