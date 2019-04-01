@@ -30,7 +30,7 @@ public class OutPutPanel extends JPanel {
         this.setBackground(Color.white);
         this.setLayout(null);
 
-        outputIpLabel = new JLabel("选择图片");
+        outputIpLabel = new JLabel("选择图片或文件夹");
         outputIpLabel.setBounds(40, 20, 100, 30);
         this.add(outputIpLabel);
         
@@ -38,7 +38,8 @@ public class OutPutPanel extends JPanel {
         selectFileBtn.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent arg0) {
         		JFileChooser chooser = new JFileChooser("./");             //设置选择器 
-        		chooser.setMultiSelectionEnabled(true);   //设为多选
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setMultiSelectionEnabled(true);   //设为多选
         		int returnVal = chooser.showOpenDialog(null);        //是否打开文件选择框
         		System.out.println("returnVal="+returnVal); 
         		if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型 
