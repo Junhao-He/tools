@@ -1,7 +1,6 @@
 package sam.znv;
 
-import com.znv.door.SendDoorThread;
-import com.znv.vehicle.SendVehicleThread;
+
 import sam.znv.controller.SendController;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ public class base extends JFrame {
 	public static boolean iotStopFlag = false;
 	public static boolean doorStopFlag = false;
 	public static boolean vehicleStopFlag = false;
-	public static SendVehicleThread vehicletask = new SendVehicleThread();
+	//public static SendVehicleThread vehicletask = new SendVehicleThread();
 //	public static CircSendVehicleThread vehiclecirctask = new CircSendVehicleThread();
 	//定义图片地址
 
@@ -110,8 +109,8 @@ public class base extends JFrame {
         JButton Button_doorStart = new JButton("发送");
         Button_doorStart.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		SendDoorThread.filepath =filepath;
-				SendController.sendIdx1(filepath);
+        		//SendDoorThread.filepath =filepath;
+				SendController.sendIdx1(filepath,1,1);
         	}
         });
         Button_doorStart.setBounds(38, 259, 93, 23);

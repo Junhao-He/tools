@@ -19,10 +19,7 @@
  */
 package sam.znv.kafka;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
@@ -33,9 +30,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.logging.log4j.util.Strings;
 
-//import com.znv.icap.bem.util.PathUtil;
-//import com.znv.icap.util.ThreadPoolUtils;
-import com.znv.log.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * kafka生产者 不能用0.10的jar包
@@ -43,6 +40,7 @@ import com.znv.log.Logger;
  * @author HuangRu
  */
 public final class ZKafkaProducter {
+    Logger logger = LoggerFactory.getLogger(ZKafkaProducter.class);
     private static ZKafkaProducter instance = null;
 
     private KafkaProducer<String, JSONObject> producer;
@@ -50,21 +48,21 @@ public final class ZKafkaProducter {
 
     private ZKafkaProducter() {
         properties = new Properties();
-        File f = new File("D:\\Users\\User\\Desktop\\simulator\\kafka_producer.properties");
-        FileInputStream fs = null;
+
+        InputStream fs = null;
         try {
-            fs = new FileInputStream(f);
+            fs = this.getClass().getClassLoader().getResourceAsStream("kafka_producer.properties");
             properties.load(fs);
         } catch (FileNotFoundException e) {
-            Logger.L.error(e);
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            Logger.L.error(e);
+            logger.error(e.getMessage());
         } finally {
             if (fs != null) {
                 try {
                     fs.close();
                 } catch (IOException e) {
-                    Logger.L.error(e);
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -88,7 +86,7 @@ public final class ZKafkaProducter {
      * 
      * @param message 发送的消息
      */
-    public void sendMessage(JSONObject message, Long sendcount, Long countpersencond) {
+    public void sendMessage(JSONObject message) {
 
         String topic = properties.getProperty("kafka.topic");
 
@@ -138,7 +136,7 @@ public final class ZKafkaProducter {
 
         public void onCompletion(RecordMetadata metadata, Exception exception) {
             if (exception != null) {
-                Logger.L.error("Error sending message: {} ", exception.getMessage());
+                logger.error("Error sending message: {} ", exception.getMessage());
             }
         }
     }

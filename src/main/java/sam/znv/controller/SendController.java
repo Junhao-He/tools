@@ -16,14 +16,13 @@ import sam.znv.utils.PictureUtils;
 
 public class SendController {
 
-    //todo:  config
-    static String dstTopic = "kafka.topic";
+
 
     public static void main(String[] args) throws IOException {
-        sendIdx1("D:\\Users\\User\\Desktop\\pic\\dd.jpg");
+        sendIdx1("D:\\Users\\User\\Desktop\\pic\\dd.jpg",1,1);
     }
 
-    public static void sendIdx1(String picPath){
+    public static void sendIdx1(String picPath, int sendcount, int countpersencond){
         System.out.println("*********************"+picPath);
 
         JSONObject msg= FeatureInfo.getFeatureInfo(picPath);

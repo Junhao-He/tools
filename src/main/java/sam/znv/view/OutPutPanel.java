@@ -57,7 +57,7 @@ public class OutPutPanel extends JPanel {
         sendBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                SendController.sendIdx1(filepath);
+                SendController.sendIdx1(filepath,1,1);
                 System.out.println("发送：" + filepath);
 			}
 		});
