@@ -1,18 +1,10 @@
 package sam.znv.controller;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import sam.znv.feature.FeatureInfo;
-import sam.znv.kafka.PicAttr;
-import sam.znv.kafka.ZKafkaProducter;
-import sam.znv.utils.GetDataFeature;
-import sam.znv.utils.PictureUtils;
+import sam.znv.kafka.ZKafkaProducer;
 
 public class SendController {
 
@@ -26,7 +18,7 @@ public class SendController {
         System.out.println("*********************"+picPath);
 
         JSONObject msg= FeatureInfo.getFeatureInfo(picPath);
-        ZKafkaProducter.getInstance().sendMessage(msg);
+        ZKafkaProducer.getInstance().sendMessage(msg);
 
     }
     public static void sendIdx2(){

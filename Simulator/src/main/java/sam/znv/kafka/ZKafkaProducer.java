@@ -1,6 +1,6 @@
 /**
  * <pre>
- * 标  题: ZKafkaProducter.java.
+ * 标  题: ZKafkaProducer.java.
  * 版权所有: 版权所有(C)2001-2017
  * 公   司: 深圳中兴力维技术有限公司
  * 内容摘要: // 简要描述本文件的内容，包括主要模块、函数及其功能的说明
@@ -39,14 +39,14 @@ import org.slf4j.LoggerFactory;
  * 
  * @author HuangRu
  */
-public final class ZKafkaProducter {
-    Logger logger = LoggerFactory.getLogger(ZKafkaProducter.class);
-    private static ZKafkaProducter instance = null;
+public final class ZKafkaProducer {
+    Logger logger = LoggerFactory.getLogger(ZKafkaProducer.class);
+    private static ZKafkaProducer instance = null;
 
     private KafkaProducer<String, JSONObject> producer;
     private Properties properties;
 
-    private ZKafkaProducter() {
+    private ZKafkaProducer() {
         properties = new Properties();
 
         InputStream fs = null;
@@ -69,12 +69,12 @@ public final class ZKafkaProducter {
         producer = new KafkaProducer<>(properties);
     }
 
-    public synchronized static ZKafkaProducter getInstance() {
+    public synchronized static ZKafkaProducer getInstance() {
         if (instance == null) {
-           // synchronized (ZKafkaProducter.class) 
+           // synchronized (ZKafkaProducer.class)
             {
                 if (instance == null) {
-                    instance = new ZKafkaProducter();
+                    instance = new ZKafkaProducer();
                 }
             }
         }
