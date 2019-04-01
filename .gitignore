@@ -15,7 +15,7 @@ target/
 bin/
 classes/
 out/*
-logs/*
+*/logs/*
 dependency-reduced-pom.xml
  
 # Eclipse Project Files
