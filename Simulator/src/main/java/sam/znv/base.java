@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 
 public class base extends JFrame {
@@ -110,10 +111,12 @@ public class base extends JFrame {
         Button_doorStart.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//SendDoorThread.filepath =filepath;
+				//sendPic(filepath);
 				SendController.sendIdx1(filepath,1,1);
         	}
         });
         Button_doorStart.setBounds(38, 259, 93, 23);
         panelDoor.add(Button_doorStart);
 	}
+
 }

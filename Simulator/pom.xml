@@ -49,14 +49,6 @@
             <artifactId>kafka-clients</artifactId>
             <version>0.9.0.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>io.confluent</groupId>-->
-            <!--<artifactId>kafka-avro-serializer</artifactId>-->
-            <!--<version>3.1.1</version> &lt;!&ndash; Also tried 2.0-SNAPSHOT  &ndash;&gt;-->
-        <!--</dependency>-->
-
-
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -83,11 +75,11 @@
             <artifactId>okhttp</artifactId>
             <version>2.5.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.znv</groupId>-->
-            <!--<artifactId>Scop-System</artifactId>-->
-            <!--<version>1.0.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.znv</groupId>
+            <artifactId>Scop-System</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-server</artifactId>

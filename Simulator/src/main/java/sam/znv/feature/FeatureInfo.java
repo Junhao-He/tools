@@ -97,6 +97,47 @@ public class FeatureInfo {
         return jo;
 
     }
+
+    public static JSONObject constructMsg(String feature)
+    {
+        ArrayList<String> enterleave=getEnterAndLeaveTime1();
+        String entertime = enterleave.get(0);
+        String leavetime = enterleave.get(1);
+        String trackid = getTrackIdx();
+
+        JSONObject jo = new JSONObject();
+        jo.put("camera_id","32011500001310000002");
+        jo.put("enter_time",entertime);
+        jo.put("leave_time",leavetime);
+        jo.put("duration_time",1);
+        jo.put("gpsx",0.0f);
+        jo.put("gpsy",0.0f);
+        jo.put("task_idx","f11081621a3211e9b173801844e9b5f4");
+        jo.put("track_idx",trackid);
+        jo.put("feature",feature);
+        jo.put("sim_threshold",0.93f);
+        jo.put("rt_feature",feature);
+        jo.put("img_width",125);
+        jo.put("img_height",220);
+        jo.put("quality_score",1.0f);
+        jo.put("yaw",0.0f);
+        jo.put("pitch",0.0f);
+        jo.put("roll",0.0f);
+
+        jo.put("age",30);
+        jo.put("gender",2);
+        jo.put("glass",0);
+        jo.put("mask",0);
+        jo.put("race",0);
+        jo.put("beard",0);
+        jo.put("emotion",1);
+        jo.put("eye_open",1);
+
+        jo.put("send_idx",2);
+
+        return jo;
+
+    }
     //获取单张图片的feature
     public static String getFeature(String picPath,String requestUrl){
         String data = GetDataFeature.getImageFeature(picPath,requestUrl);
