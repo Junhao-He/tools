@@ -76,7 +76,7 @@ public class OutPutPanel extends JPanel {
         featureSendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SendController.sendIdx2(featureInput.getText());
+                SendController.sendByFeature(featureInput.getText());
             }
         });
 

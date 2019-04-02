@@ -21,7 +21,7 @@ public class SendController {
         ZKafkaProducer.getInstance().sendMessage(msg);
 
     }
-    public static void sendIdx2(String feature){
+    public static void sendByFeature(String feature){
         System.out.println("*********************"+feature);
         JSONObject msg= FeatureInfo.constructMsg(feature);
         ZKafkaProducer.getInstance().sendMessage(msg);

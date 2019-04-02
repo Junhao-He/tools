@@ -133,7 +133,7 @@ public class FeatureInfo {
         jo.put("emotion",1);
         jo.put("eye_open",1);
 
-        jo.put("send_idx",2);
+        jo.put("send_idx",1);
 
         return jo;
 
