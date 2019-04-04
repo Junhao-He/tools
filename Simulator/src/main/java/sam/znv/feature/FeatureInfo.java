@@ -82,7 +82,7 @@ public class FeatureInfo {
         jo.put("pitch",0.0f);
         jo.put("roll",0.0f);
 
-        jo.put("age",picAttr.getAge());
+        jo.put("age",picAttr.getAge().intValue());
         jo.put("gender",picAttr.getGender());
         jo.put("glass",picAttr.getEyeglass());
         jo.put("mask",picAttr.getMask());
