@@ -20,6 +20,9 @@ public class OutPutPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JLabel outputIpLabel;
     private JButton sendBtn;
+    private int countPerSecond = 0;
+    private int sendCount = 0;
+
 	//定义图片地址
     public static String filepath;
 
@@ -49,7 +52,15 @@ public class OutPutPanel extends JPanel {
         });
         selectFileBtn.setBounds(160, 20, 100, 30);
         this.add(selectFileBtn);
-        
+
+        JLabel labelFrequency = new JLabel("发送频率（次/秒）：");
+        labelFrequency.setBounds(40, 100, 120, 30);
+        this.add(labelFrequency);
+
+        JTextField frequencyInput = new JTextField("0");
+        frequencyInput.setBounds(160, 100, 50, 30);
+        this.add(frequencyInput);
+
         sendBtn = new JButton("发送");
         sendBtn.setBounds(280, 20, 100, 30);
         this.add(sendBtn);
@@ -58,6 +69,8 @@ public class OutPutPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
                 //SendController.sendIdx1(filepath,1,1);
                 System.out.println("发送：" + filepath);
+                countPerSecond = Integer.parseInt(frequencyInput.getText());
+                sendCount = 0;
                 sendPic(filepath);
 			}
 		});
@@ -84,6 +97,8 @@ public class OutPutPanel extends JPanel {
 
     private void sendPic(String path)
     {
+        System.out.println("sendCount:"+sendCount);
+        System.out.println("countPerSecond:"+countPerSecond);
         File f = new File(path);
         if (f.isDirectory()) {
             String s[] = f.list();
@@ -91,6 +106,16 @@ public class OutPutPanel extends JPanel {
                 sendPic(path + "\\" + s[i]);
             }
         } else {
+            if(countPerSecond>0&&sendCount>=countPerSecond)
+            {
+                sendCount =  0;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            sendCount += 1;
             SendController.sendIdx1(path,1,1);
         }
     }
