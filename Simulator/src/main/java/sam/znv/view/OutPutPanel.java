@@ -1,6 +1,11 @@
 package sam.znv.view;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import sam.znv.controller.SendController;
+import sam.znv.kafka.ZKafkaConsumer;
+import sam.znv.kafka.ZKafkaProducer;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -84,7 +89,7 @@ public class OutPutPanel extends JPanel {
         this.add(featureInput);
 
         JButton featureSendBtn = new JButton("发送特征");
-        featureSendBtn.setBounds(280, 60, 100, 30);
+        featureSendBtn.setBounds(280, 100, 100, 30);
         this.add(featureSendBtn);
         featureSendBtn.addActionListener(new ActionListener() {
             @Override
@@ -93,6 +98,27 @@ public class OutPutPanel extends JPanel {
             }
         });
 
+        JTextArea messageArea = new JTextArea();
+        messageArea.setBounds(40, 180, 300, 100);
+        messageArea.setLineWrap(false);
+        JScrollPane pane = new JScrollPane(messageArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        pane.setBounds(40, 180, 300, 100);
+        pane.setViewportView(messageArea);
+        this.add(pane);
+
+        JButton receiveBtn = new JButton("读取告警");
+        receiveBtn.setBounds(40, 140, 100, 30);
+        this.add(receiveBtn);
+        receiveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ConsumerRecords<String, String> records = ZKafkaConsumer.getInstance().receiveMessage();
+                for(ConsumerRecord<String, String> record : records)
+                {
+                    messageArea.append(record.value()+"\n");
+                }
+            }
+        });
     }
 
     private void sendPic(String path)

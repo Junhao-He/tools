@@ -1,6 +1,6 @@
 /**
  * <pre>
- * 标  题: ZKafkaProducer.java.
+ * 标  题: ZKafkaConsumer.java.
  * 版权所有: 版权所有(C)2001-2017
  * 公   司: 深圳中兴力维技术有限公司
  * 内容摘要: // 简要描述本文件的内容，包括主要模块、函数及其功能的说明
@@ -19,39 +19,42 @@
  */
 package sam.znv.kafka;
 
-import java.io.*;
-import java.util.Properties;
-import java.util.concurrent.Future;
-
 import com.alibaba.fastjson.JSONObject;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.logging.log4j.util.Strings;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.concurrent.Future;
+
 /**
- * kafka生产者 不能用0.10的jar包
+ * kafka消费者 不能用0.10的jar包
  * 
  * @author HuangRu
  */
-public final class ZKafkaProducer {
-    Logger logger = LoggerFactory.getLogger(ZKafkaProducer.class);
-    private static ZKafkaProducer instance = null;
+public final class ZKafkaConsumer {
+    Logger logger = LoggerFactory.getLogger(ZKafkaConsumer.class);
+    private static ZKafkaConsumer instance = null;
 
-    private KafkaProducer<String, String> producer;
+    private KafkaConsumer<String, String> consumer;
     private Properties properties;
 
-    private ZKafkaProducer() {
+    private ZKafkaConsumer() {
         properties = new Properties();
 
         InputStream fs = null;
         try {
-            fs = this.getClass().getClassLoader().getResourceAsStream("kafka_producer.properties");
+            fs = this.getClass().getClassLoader().getResourceAsStream("kafka_consumer.properties");
             properties.load(fs);
         } catch (FileNotFoundException e) {
             logger.error(e.getMessage());
@@ -66,15 +69,16 @@ public final class ZKafkaProducer {
                 }
             }
         }
-        producer = new KafkaProducer<>(properties);
+        consumer = new KafkaConsumer<>(properties);
+        consumer.subscribe(Arrays.asList("yltest"));
     }
 
-    public synchronized static ZKafkaProducer getInstance() {
+    public synchronized static ZKafkaConsumer getInstance() {
         if (instance == null) {
            // synchronized (ZKafkaProducer.class)
             {
                 if (instance == null) {
-                    instance = new ZKafkaProducer();
+                    instance = new ZKafkaConsumer();
                 }
             }
         }
@@ -82,16 +86,18 @@ public final class ZKafkaProducer {
     }
 
     /**
-     * 发送数据到kafka
+     * 拉数据从kafka
      * 
-     * @param message 发送的消息
+     *
      */
-    public void sendMessage(JSONObject message) {
+    public ConsumerRecords<String, String> receiveMessage() {
+
+        System.out.println("press button");
 
         String topic = properties.getProperty("kafka.topic");
 
         if (Strings.isEmpty(topic)) {
-            return;
+            return null;
         }
 //        if (Strings.isEmpty(message)) {
 //            return;
@@ -104,11 +110,9 @@ public final class ZKafkaProducer {
                 producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
             }
         });*/
-        ProducerRecord<String, String> data = new ProducerRecord(topic, null, message.toJSONString());
+        ConsumerRecords<String, String> records = consumer.poll(1000);
 
-
-        Future<RecordMetadata> res = producer.send(data);
-        System.out.println(res.isDone());
+        return records;
 
 //        producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
     }
@@ -124,7 +128,7 @@ public final class ZKafkaProducer {
      * 关闭
      */
     public void close() {
-        producer.close();
+        consumer.close();
     }
 
     /**
