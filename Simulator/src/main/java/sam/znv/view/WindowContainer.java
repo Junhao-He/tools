@@ -12,7 +12,14 @@ import javax.swing.JTabbedPane;
  */
 public class WindowContainer {
     JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-    OutPutPanel outputPanel = new OutPutPanel(); // OutPut TAB
+    //ONE TO KAFKA
+    OutPutPanel outputPanel = new OutPutPanel();
+    //PICTURE TO FEATURE
+    OutPutPanel2 outPutPanel2 = new OutPutPanel2();
+    //PROPERTIES TO KAFKA
+    OutPutPanel3 outPutPanel3 = new OutPutPanel3();
+    //writeHbase
+    OutPutPanel4 outPutPanel4 = new OutPutPanel4();
 
 
     public void initWindow() {
@@ -21,11 +28,14 @@ public class WindowContainer {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());
-        frame.setBounds(200, 200, 490, 350);
+        //改变图片大小
+        frame.setBounds(300, 300, 600, 500);
         frame.setLocationRelativeTo(null); // 居中
         frame.add(tabbedPane, BorderLayout.CENTER);
-
-        tabbedPane.add(outputPanel,"ONE TO KAFKA", 0);
+        tabbedPane.addTab("ONE TO KAFKA",outputPanel);
+        tabbedPane.addTab("PICTURE TO FEATURE",outPutPanel2);
+        tabbedPane.addTab("PROPERTIES TO KAFKA",outPutPanel3);
+        tabbedPane.addTab("WRITE TO HBASE",outPutPanel4);
 
         frame.setVisible(true);
     }

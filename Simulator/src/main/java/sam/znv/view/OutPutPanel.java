@@ -1,16 +1,21 @@
 package sam.znv.view;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.avro.util.Utf8;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import sam.znv.controller.SendController;
 import sam.znv.kafka.ZKafkaConsumer;
 import sam.znv.kafka.ZKafkaProducer;
+import scala.util.control.Exception;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.*;
 
@@ -36,7 +41,7 @@ public class OutPutPanel extends JPanel {
         this.setBackground(Color.white);
         this.setLayout(null);
 
-        outputIpLabel = new JLabel("选择图片或文件夹");
+        outputIpLabel = new JLabel("选择图片");
         outputIpLabel.setBounds(40, 20, 100, 30);
         this.add(outputIpLabel);
         
@@ -99,10 +104,10 @@ public class OutPutPanel extends JPanel {
         });
 
         JTextArea messageArea = new JTextArea();
-        messageArea.setBounds(40, 180, 300, 100);
+        messageArea.setBounds(40, 180, 500, 200);
         messageArea.setLineWrap(false);
         JScrollPane pane = new JScrollPane(messageArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        pane.setBounds(40, 180, 300, 100);
+        pane.setBounds(40, 180, 500, 200);
         pane.setViewportView(messageArea);
         this.add(pane);
 
@@ -112,10 +117,10 @@ public class OutPutPanel extends JPanel {
         receiveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ConsumerRecords<String, String> records = ZKafkaConsumer.getInstance().receiveMessage();
-                for(ConsumerRecord<String, String> record : records)
+                ArrayList<HashMap<Utf8, Object>> records = ZKafkaConsumer.getInstance().receiveMessage();
+                for( HashMap<Utf8, Object> record : records)
                 {
-                    messageArea.append(record.value()+"\n");
+                    messageArea.append(record.toString()+"\n");
                 }
             }
         });

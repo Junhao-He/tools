@@ -19,12 +19,15 @@
  */
 package sam.znv.kafka;
 
-import com.alibaba.fastjson.JSONObject;
+import org.apache.avro.Schema;
+import org.apache.avro.io.BinaryDecoder;
+import org.apache.avro.io.DecoderFactory;
+import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.avro.util.Utf8;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -33,10 +36,10 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
-import java.util.concurrent.Future;
-
 /**
  * kafka消费者 不能用0.10的jar包
  * 
@@ -46,7 +49,7 @@ public final class ZKafkaConsumer {
     Logger logger = LoggerFactory.getLogger(ZKafkaConsumer.class);
     private static ZKafkaConsumer instance = null;
 
-    private KafkaConsumer<String, String> consumer;
+    private KafkaConsumer<String, byte[]> consumer;
     private Properties properties;
 
     private ZKafkaConsumer() {
@@ -69,8 +72,8 @@ public final class ZKafkaConsumer {
                 }
             }
         }
+
         consumer = new KafkaConsumer<>(properties);
-        consumer.subscribe(Arrays.asList("yltest"));
     }
 
     public synchronized static ZKafkaConsumer getInstance() {
@@ -90,7 +93,7 @@ public final class ZKafkaConsumer {
      * 
      *
      */
-    public ConsumerRecords<String, String> receiveMessage() {
+    public ArrayList<HashMap<Utf8, Object>> receiveMessage() {
 
         System.out.println("press button");
 
@@ -110,11 +113,38 @@ public final class ZKafkaConsumer {
                 producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
             }
         });*/
-        ConsumerRecords<String, String> records = consumer.poll(1000);
+        consumer.subscribe(Arrays.asList(topic));
 
-        return records;
+        //解析avro格式数据
+        String schema="{\"type\":\"map\",\"values\":[\"null\",\"int\",\"long\",\"float\",\"double\",\"string\",\"boolean\",\"bytes\"]}";
+        Schema parse = new Schema.Parser().parse(schema);
+        SpecificDatumReader<HashMap<Utf8, Object>> reader = new SpecificDatumReader<>(parse);
 
-//        producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
+        // 读取数据，读取超时时间为100ms
+        ArrayList<HashMap<Utf8, Object>> arrays = new ArrayList<>();
+        ConsumerRecords<String, byte[]> records = consumer.poll(1000);
+        for (ConsumerRecord<String, byte[]> record : records){
+            BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(record.value(), null);
+            HashMap<Utf8, Object> hashMap = new HashMap<>();
+            HashMap<Utf8, Object> read = null;
+            try {
+                read = reader.read(hashMap, decoder);
+                //对数据进行判断，是告警数据进行判断  is_alarm=="1"
+//
+//                if(read.containsKey("is_alarm")){
+//                    String alarm = read.get("is_alarm").toString();
+//                    if(alarm=="1"){
+//                        arrays.add(read);
+//                    }
+//                }
+                arrays.add(read);
+                System.out.println("-----对avro格式数据进行解析------"+read);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        return arrays;
     }
     /**
      * 返回打印device_code和mete_id的字符串

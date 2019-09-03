@@ -43,9 +43,9 @@ public final class ZKafkaProducer {
     Logger logger = LoggerFactory.getLogger(ZKafkaProducer.class);
     private static ZKafkaProducer instance = null;
 
-    private KafkaProducer<String, String> producer;
+    private KafkaProducer<String, JSONObject> producer;
     private Properties properties;
-
+    private static String topic = "";
     private ZKafkaProducer() {
         properties = new Properties();
 
@@ -66,7 +66,15 @@ public final class ZKafkaProducer {
                 }
             }
         }
-        producer = new KafkaProducer<>(properties);
+        //添加kafka参数
+        Properties pro = new Properties();
+        pro.put("bootstrap.servers",properties.getProperty("bootstrap.servers"));
+        pro.put("key.serializer",properties.getProperty("key.serializer"));
+        pro.put("value.serializer",properties.getProperty("value.serializer"));
+        pro.put("acks",properties.getProperty("acks"));
+        pro.put("retries",properties.getProperty("retries"));
+        pro.put("linger.ms",properties.getProperty("linger.ms"));
+        producer = new KafkaProducer<>(pro);
     }
 
     public synchronized static ZKafkaProducer getInstance() {
@@ -86,31 +94,32 @@ public final class ZKafkaProducer {
      * 
      * @param message 发送的消息
      */
-    public void sendMessage(JSONObject message) {
+    public void sendMessage(JSONObject message,String noticTopic) {
 
-        String topic = properties.getProperty("kafka.topic");
+        if(noticTopic=="noticTopic"){
+            topic = properties.getProperty("notic.topic");
+        }else{
+            topic = properties.getProperty("kafka.topic");
+        }
 
         if (Strings.isEmpty(topic)) {
             return;
         }
-//        if (Strings.isEmpty(message)) {
-//            return;
-//        }
+        System.out.println("******topic*****"+topic+"********message*****"+message);
+        ProducerRecord<String, JSONObject> data = new ProducerRecord(topic, null, message);
 
-        /*ThreadPoolUtils.exec(new Runnable() {
+        Future<RecordMetadata> res = producer.send(data, new Callback() {
             @Override
-            public void run() {
-                //Logger.L.debug("send alarm to kafka:" + message);
-                producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                if(exception == null){
+                    System.out.println("发送成功！！！");
+                }else{
+                    System.out.println("发送失败！！！");
+                }
             }
-        });*/
-        ProducerRecord<String, String> data = new ProducerRecord(topic, null, message.toJSONString());
-
-
-        Future<RecordMetadata> res = producer.send(data);
+        });
         System.out.println(res.isDone());
 
-//        producer.send(new ProducerRecord<String, String>(topic, message), new KafkaCallback());
     }
     /**
      * 返回打印device_code和mete_id的字符串

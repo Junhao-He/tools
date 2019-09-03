@@ -11,6 +11,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <output.encoding>UTF-8</output.encoding>
+        <spark.version>1.6</spark.version>
+        <scala.version>2.11</scala.version>
+        <phoenix.version>4.9.0</phoenix.version>
     </properties>
 
     <dependencies>
@@ -21,16 +24,35 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}\lib\phoenix-4.9.0-HBase-1.1-client.jar</systemPath>
         </dependency>-->
+
+        <!--hbase相关设置-->
         <dependency>
-            <groupId>org.apache.phoenix</groupId>
-            <artifactId>phoenix-core</artifactId>
-            <version>4.9.0-HBase-1.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>netty-all</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <!--Hbase-end-->
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
 
         <dependency>
@@ -74,11 +96,6 @@
             <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
             <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.znv</groupId>
-            <artifactId>Scop-System</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
@@ -165,26 +182,6 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.znv.fss.entry.FssStreamingApplication</mainClass>
-                                </transformer>
-                                <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>com.znv.fss.entry.FssNNApplication</mainClass>
-                                </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.znv.fss.entry.FssStreamingApplicationBig</mainClass>
-                                </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.znv.fss.entry.FssStreamingApplicationSmall</mainClass>
-                                </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.znv.fss.entry.ZsrImpleNN</mainClass>
-                                </transformer>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.znv.fss.entry.MyTest</mainClass>
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
