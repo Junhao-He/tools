@@ -9,39 +9,41 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.*;
 
 /**
  * Created by 86157 on 2019/9/3.
  */
-/*
-模拟消费者，消费avro格式数据，并进行判断输出IS_Alarm="1"的消息
- */
+
 public class parseAvroDataConsumer {
 
+    /**
+     * 模拟消费者，消费kafka中的avro格式数据，将数据写入本地
+     * @path 数据写入的路径
+     * @bootstrapIp kafka服务器地址及端口号
+     * @topic 消费的kafka
+     */
+
+    private static FileOutputStream fos = null;
+    private static ObjectOutputStream oos = null;
+    private static String path = "D:\\data\\f.txt";
+    private static String bootstrapIp = "10.45.157.112:9092";
+    private static String topic = "fss-analysis-n-project-v1-2-production-lg";
 
     public static void main(String[] args) {
         Properties props = new Properties();
-        // 定义kakfa 服务的地址，不需要将所有broker指定上
-        props.put("bootstrap.servers", "10.45.157.112:9092");
-        // 制定consumer group
+        props.put("bootstrap.servers", bootstrapIp);
         props.put("group.id", "test-2");
-        // 是否自动确认offset
         props.put("enable.auto.commit", "true");
-        // 自动确认offset的时间间隔
         props.put("auto.commit.interval.ms", "1000");
-        // key的序列化类
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        // value的序列化类
         props.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-
-        //指定消费者组
-        //1-1 换组重复消费
         props.put("auto.offset.reset","earliest");  //latest, earliest, none
-
         // 定义consumer
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Arrays.asList("fss-analysis-n-project-v1-2-production-lg"));
+        consumer.subscribe(Arrays.asList(topic));
 
         //解析avro格式数据
         String schema="{\"type\":\"map\",\"values\":[\"null\",\"int\",\"long\",\"float\",\"double\",\"string\",\"boolean\",\"bytes\"]}";
@@ -49,7 +51,6 @@ public class parseAvroDataConsumer {
         SpecificDatumReader<HashMap<Utf8, Object>> reader = new SpecificDatumReader<>(parse);
 
         // 读取数据，读取超时时间为100ms
-        ArrayList<HashMap<Utf8, Object>> arrays = new ArrayList<>();
         ConsumerRecords<String, byte[]> records = consumer.poll(1000);
         for (ConsumerRecord<String, byte[]> record : records){
             BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(record.value(), null);
@@ -57,13 +58,73 @@ public class parseAvroDataConsumer {
             HashMap<Utf8, Object> read = null;
             try {
                 read = reader.read(hashMap, decoder);
-                arrays.add(read);
+                StringBuilder sb = new StringBuilder();
+                for(Map.Entry<Utf8, Object> entry:read.entrySet()){
+                    sb.append(entry.getKey()+"="+entry.getValue()+",");
+                }
+                appendData2File(sb.toString(),path);
+
                 System.out.println("----------------------------"+read);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
+    }
 
+    /**
+    *topic中数据写入本地某个文件（追加）
+     */
+    public static void appendData2File(String dataString,String filename){
+        OutputStreamWriter out = null;
+        FileOutputStream fos = null;
+        try{
+            File file = new File(filename);
+            if(!file.getParentFile().isDirectory()){
+                file.getParentFile().mkdirs();
+            }
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            //追加写入文件，使用UTF-8格式
+            fos = new FileOutputStream(filename, true);
+            out = new OutputStreamWriter(fos,"UTF-8");
+            out.write(dataString);
+            out.write("\r\n");
+        }catch (Exception e){
+        }finally {
+            try {
+                if(null!=out){
+                    out.flush();
+                    out.close();
+                }
+            }catch (IOException e){}
+
+        }
+    }
+
+
+    //获取文件大小
+    public static long getFileSize(File file){
+        FileChannel fc = null;
+        try {
+            if(file.exists() && file.isFile()){
+                FileInputStream fis = new FileInputStream(file);
+                fc = fis.getChannel();
+                return fc.size();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static void writeFile(HashMap<String,String> data) throws Exception{
+        File file = new File(path);
+        fos = new FileOutputStream(file);
+        oos = new ObjectOutputStream(fos);
+        oos.writeObject(data);
+        oos.flush();
+        oos.close();
     }
 
 }
