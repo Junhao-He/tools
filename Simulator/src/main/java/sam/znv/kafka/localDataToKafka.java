@@ -6,11 +6,10 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.logging.log4j.util.Strings;
-import org.junit.Before;
-import org.junit.Test;
 import sam.znv.utils.JsonObjectType;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -21,21 +20,26 @@ import java.util.concurrent.Future;
  */
 public class localDataToKafka {
 
-
     /**
      * 加载本地数据发送kafka
      * @bootstrapIp 指定kafka服务器地址及端口号
      * @topic 指定写入数据的topic
      * @path 指定数据所在的路径
      */
-    private KafkaProducer<String, JSONObject> producer;
+    private static KafkaProducer<String, JSONObject> producer;
     private static String topic = "test-1";
     private static String bootstrapIp = "10.45.157.112:9092";
-    private static String path = "D:\\data\\f.txt";
+    private static String path = "D:\\data\\20190910111611.txt";
 
-    //添加kafka参数
-    @Before
-    public void loadProperties(){
+    public static void main(String[] args) {
+        loadProperties();
+        sendData(path);
+    }
+
+    /**
+     * 添加kafka参数
+     */
+    public static void loadProperties(){
         Properties pro = new Properties();
         pro.put("bootstrap.servers",bootstrapIp);
         pro.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
@@ -47,11 +51,33 @@ public class localDataToKafka {
     }
 
     /**
-     * 读取本地文件，构造特征数据
+     * 遍历文件夹
+     * @param path 图片路径
      */
-    @Test
-    public void readFile() throws IOException {
-        FileReader fr = new FileReader(path);
+    public static void sendData(String path){
+        File f = new File(path);
+        if(f.isDirectory()){
+            String s[] = f.list();
+            for(int i=0;i<s.length;i++){
+                sendData(path+"\\"+s[i]);
+            }
+        }else{
+            try {
+                readFile(path);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    /**
+     * 读取本地文件，构造特征数据
+     * @param filename 传入单个文件路径
+     * @throws IOException
+     */
+    public static void readFile(String filename) throws IOException {
+        FileReader fr = new FileReader(filename);
         BufferedReader br = new BufferedReader(fr);
         String [] arrs = null;
         String[] temp = null;
@@ -62,8 +88,15 @@ public class localDataToKafka {
             for(String arr : arrs){
                 if(!arr.trim().isEmpty()){
                     temp = arr.split("=");
-                    String jo1 = temp[0].toString();
-                    String jo2 = temp[1];
+                    String jo1 = null;
+                    String jo2 = null;
+                    if(temp.length < 2){
+                       jo1 = temp[0].toString();
+                       jo2 = "";
+                    }else {
+                       jo1 = temp[0].toString();
+                       jo2 = temp[1];
+                    }
                     //判断数据类型，并进行转化，判断类型并进行转化
                     switch (JsonObjectType.objectType(jo1)){
                         case "Int" : jo.put(jo1,stringToInt(jo2));break;
@@ -83,7 +116,7 @@ public class localDataToKafka {
      * 发送数据到kafka
      * @param message 发送的消息
      */
-    public void sendMessage(JSONObject message,String topic) {
+    public static void sendMessage(JSONObject message,String topic) {
 
         if (Strings.isEmpty(topic)) {
             return;
