@@ -24,7 +24,7 @@ import sam.znv.utils.SaltingUtil;
 public class HbaseWriteAndRead {
 
     private static Properties properties = loadFromResource("phoenix.properties");
-    private static final String stUrl = "http://10.45.157.115:80/verify/feature/gets";
+    private static final String stUrl = properties.getProperty("sensetimeUrl");
     //连接集群
     public static Connection initHbase() throws IOException {
         //创建连接
@@ -36,13 +36,13 @@ public class HbaseWriteAndRead {
 
     public static void main(String[] args) throws IOException {
 
-//        DataBean dataBean = writeOneData("E:\\520.jpg", 2);
+//        DataBean dataBean = writeOneData("E:\\czl.JPG", 2);
 //        try {
 //            inserData(dataBean);
 //        }catch (Exception e){
 //            e.printStackTrace();
 //        }
-        String result = getDataRowKey("7597655675459787609", "2");
+        String result = getDataRowKey("2019-09-18 19:08:57", "AW1ED55z632kzP1m0JIY");
         System.out.println(result);
     }
 
@@ -59,7 +59,12 @@ public class HbaseWriteAndRead {
         }
     }
 
-    //构造数据
+    /**
+     * 构造数据
+     * @param picturePath 传入单张图片地址
+     * @param libId 库id
+     * @return
+     */
     public static DataBean writeOneData(String picturePath,int libId){
         //获取图片特征
         String feature = getFeature(picturePath,stUrl);
@@ -81,7 +86,11 @@ public class HbaseWriteAndRead {
         return dataBean;
     }
 
-    //插入数据
+    /**
+     * 插入数据
+     * @param data 插入单条数据
+     * @throws IOException
+     */
     public static void inserData( DataBean data) throws IOException{
         String tableName = properties.getProperty("HbaseTablePersonList");
         TableName tablename = TableName.valueOf(tableName);
@@ -108,33 +117,50 @@ public class HbaseWriteAndRead {
         table.close();
 
     }
-    //根据rowkey进行查询数据
-    public static String getDataRowKey(String person_id,String lib_id) throws IOException{
+
+    /**
+     *根据rowkey进行查询数据
+     * @param opTime 查询人员时间
+     * @param uuid 查询uuid
+     * @return
+     * @throws IOException
+     */
+    public static String getDataRowKey(String opTime,String uuid) throws IOException{
         //创建连接
-        String tableName = properties.getProperty("HbaseTablePersonList");
+        String tableName = properties.getProperty("HbaseTableAlarm");
         //HbaseTablePersonList  HbaseTableAlarm
         HTable table =(HTable) initHbase().getTable(TableName.valueOf(tableName));
         //rowkey的获取
 
         byte[] salt2 = new byte[1];
-        byte[] byteKey = Bytes.add((Bytes.toBytes(Integer.parseInt(lib_id))), (Bytes.toBytes(person_id)));
+        byte[] byteKey = Bytes.add((Bytes.toBytes(opTime)), (Bytes.toBytes(uuid)));
         salt2[0] = SaltingUtil.getSaltingByte(byteKey, 0, byteKey.length, 24);
+        Put put = new Put(Bytes.add(salt2, byteKey));
         Get get = new Get(Bytes.add(salt2, byteKey));
+        /*
+        byte[] salt2 = new byte[1];
+        byte[] byteKey = Bytes.add((Bytes.toBytes(data.getLIB_ID())), Bytes.toBytes(data.getPERSON_ID()));
+        salt2[0] = SaltingUtil.getSaltingByte(byteKey, 0, byteKey.length, 24);
+        Put put = new Put(Bytes.add(salt2, byteKey));
+         */
         StringBuffer sb = new StringBuffer();
         if(!get.isCheckExistenceOnly()){
             Result result = table.get(get);
-            sb.append("LIB_ID:{"+lib_id+"}  ");
-            sb.append("PERSON_ID:{"+person_id+"}  ");
-            for(Cell cell: result.rawCells()){
-                String colName = Bytes.toString(cell.getQualifierArray(),cell.getQualifierOffset(),cell.getQualifierLength());
-                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-                if (colName.equals("PERSON_NAME")){
-                    sb.append("PERSON_NAME:{"+value+"}  ");
+            if(result.isEmpty()){
+                return null;
+            }else{
+                sb.append("OP_TIME:{"+opTime+"}  ");
+                sb.append("UUID:{"+uuid+"}  ");
+                for(Cell cell: result.rawCells()){
+                    String colName = Bytes.toString(cell.getQualifierArray(),cell.getQualifierOffset(),cell.getQualifierLength());
+                    String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+                    if (colName.equals("PERSON_NAME")){
+                        sb.append("PERSON_NAME:{"+value+"}  ");
+                    }
+                    if(colName.equals("CONTROL_END_TIME")){
+                        sb.append("CONTROL_END_TIME:{"+value+"}");
+                    }
                 }
-                if(colName.equals("CONTROL_END_TIME")){
-                    sb.append("CONTROL_END_TIME:{"+value+"}");
-                }
-
             }
         }
         return sb.toString();

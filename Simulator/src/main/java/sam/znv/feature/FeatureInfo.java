@@ -118,7 +118,12 @@ public class FeatureInfo {
 
         return jo;
     }
-    //1.32版本door数据
+
+    /**
+     * 1.32版本door数据
+     * @param picPath 单个图片路径
+     * @return
+     */
     public static JSONObject getFeatureInfoFusionDoor(String picPath){
         JSONObject jo = new JSONObject();
         String feature = getFeature(picPath,requestUrl);
@@ -181,7 +186,11 @@ public class FeatureInfo {
         jo.put("quality_score",1.0f);
         return jo;
     }
-    //1.32版本access_source = community 中 camera数据
+    /**
+     * 1.32版本access_source = community 中 camera数据
+     * @param picPath 单个图片路径
+     * @return
+     */
     public static JSONObject getFeatureInfoFusion_community_camera(String picPath){
 
         String feature = getFeature(picPath,requestUrl);
@@ -241,7 +250,11 @@ public class FeatureInfo {
 
         return jo;
     }
-    //1.32版本access_source = fss 中 camera数据
+    /**
+     * 1.32版本access_source = fss 中 camera数据
+     * @param picPath 单个图片路径
+     * @return
+     */
     public static JSONObject getFeatureInfoFusion_fss_camera(String picPath){
 
         String feature = getFeature(picPath,requestUrl);
@@ -293,9 +306,11 @@ public class FeatureInfo {
         return jo;
 
     }
-
-
-    //黑人算法字段模拟
+    /**
+     * 黑人算法字段模拟
+     * @param picPath 单个图片路径
+     * @return
+     */
     public static JSONObject getFeatureInfoFusionBlackMan(String picPath){
 
         String feature = getFeature(picPath,requestUrl);
@@ -410,6 +425,13 @@ public class FeatureInfo {
 
     }
 
+    public static JSONObject getFeatureInfoCluster(String picPath){
+        String feature = getFeature(picPath,requestUrl);
+        PicAttr picAttr=getPicAttr(picPath, requestAttrUrl);
+        JSONObject jo = new JSONObject();
+
+        return jo;
+    }
     public static JSONObject constructMsg(String feature)
     {
         ArrayList<String> enterleave=getEnterAndLeaveTime1();
@@ -450,14 +472,24 @@ public class FeatureInfo {
         return jo;
 
     }
-    //获取单张图片的feature
+    /**
+     * 获取单张图片的feature
+     * @param picPath 图片路径
+     * @param requestUrl 请求的地址
+     * @return
+     */
     public static String getFeature(String picPath,String requestUrl){
         String data = GetDataFeature.getImageFeature(picPath,requestUrl);
         String feature = JSON.parseObject(data).getOrDefault("feature","").toString();
 //        byte[] _feature = Base64.getDecoder().decode(feature);
         return feature;
     }
-    //获取图片对应的属性
+    /**
+     * 获取图片对应的属性
+     * @param picPath 图片路径
+     * @param requestUrl 请求的地址
+     * @return
+     */
     public static PicAttr getPicAttr(String picPath,String requestUrl){
         byte[] data = PictureUtils.image2byte(picPath);
         String dd = GetDataFeature.getFeature("zs",data,requestUrl);
@@ -465,7 +497,11 @@ public class FeatureInfo {
         PicAttr picAttr = JSONObject.parseObject(dd, PicAttr.class);
         return picAttr;
     }
-    //批量获取特征
+    /**
+     * 批量获取特征
+     * @param picPath 图片路径
+     * @param requestUrl 请求的地址
+     */
     public static void getBatchFeature(String picPath,String requestUrl){
         byte[] data = PictureUtils.image2byte(picPath);
         JSONObject jo = new JSONObject();
@@ -476,7 +512,11 @@ public class FeatureInfo {
         JSONArray ja = GetDataFeature.getBatchFeature2(person,requestUrl);
         System.out.println(ja.getString(0));
     }
-    //构造通知topic消息
+    /**
+     * 构造通知topic消息
+     * @param lib_id 传入更改的lib_id
+     * @return
+     */
     public  static JSONObject noticTopicMsg(String lib_id) {
         Properties properties = loadFromResource("kafka_producer.properties");
         String table_name = properties.getProperty("table_name");

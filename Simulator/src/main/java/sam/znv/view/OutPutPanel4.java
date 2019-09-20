@@ -127,6 +127,7 @@ public class OutPutPanel4 extends JPanel {
                 try{
                     System.out.println("查询名单库是："+alarm_Lib+"查询的person_id是："+alarm_Person_Id);
                     messageArea.append(getDataRowKey(alarm_Person_Id,alarm_Lib));
+                    messageArea.append("\r\n");
                 }catch (Exception e1){
                     e1.printStackTrace();
                 }

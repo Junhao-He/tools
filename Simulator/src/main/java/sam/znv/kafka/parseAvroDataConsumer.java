@@ -29,10 +29,10 @@ public class parseAvroDataConsumer {
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
 
-    private static String path = "D:\\data\\init.txt";
+    private static String path = "D:\\data\\history.txt";
 
-    private static String bootstrapIp = "10.45.157.112:9092";
-    private static String topic = "fss-analysis-n-project-v1-2-production";
+    private static String bootstrapIp = "10.45.154.210:9092";
+    private static String topic = "fss-history-n-project-v1-2-production-cluster";
     private static RandomAccessFile out_r;
     public static void main(String[] args) {
         Properties props = new Properties();
