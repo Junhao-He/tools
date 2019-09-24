@@ -425,11 +425,51 @@ public class FeatureInfo {
 
     }
 
+    /**
+     * 聚类字段模拟
+     * @param picPath 传入图片路径
+     * @return
+     */
     public static JSONObject getFeatureInfoCluster(String picPath){
         String feature = getFeature(picPath,requestUrl);
         PicAttr picAttr=getPicAttr(picPath, requestAttrUrl);
+        System.out.println(feature);
+        System.out.println(picAttr);
+        ArrayList<String> enterleave=getEnterAndLeaveTime1();
+        String entertime = enterleave.get(0);
+        String leavetime = enterleave.get(1);
+        String trackid = getTrackIdx();
         JSONObject jo = new JSONObject();
-
+        String uuid = getUUID();
+        jo.put("uuid",uuid);
+        jo.put("feature",feature);
+        jo.put("enter_time",entertime);
+        jo.put("leave_time",leavetime);
+        jo.put("event_id",5801);
+        jo.put("event_time",entertime);
+        jo.put("img_url",picPath);
+        jo.put("event_type",2001);
+        jo.put("msg_type","faceSnapEvent");
+        jo.put("big_picture_uuid","http://10.45.152.148:9008/GetPictureUrl/fastdfs_"+uuid);
+        jo.put("roll",0.0f);
+        jo.put("frame_index","748");
+        jo.put("task_idx","1555917855202");
+        jo.put("send_idx",2);
+        jo.put("track_idx",trackid);
+        jo.put("msg_source","camera");
+        jo.put("camera_kind",3);
+        jo.put("camera_id","32011500001310000002");
+        jo.put("camera_name","211_camera");
+        jo.put("camera_type",30001);
+        jo.put("office_id","");
+        jo.put("office_name","");
+        jo.put("right_pos",400);
+        jo.put("left_pos",400);
+        jo.put("img_width",200);
+        jo.put("img_height",100);
+        jo.put("similarity",0.92f);
+        jo.put("person_id",uuid);
+        jo.put("lib_id",3);
         return jo;
     }
     public static JSONObject constructMsg(String feature)

@@ -60,6 +60,8 @@ public class JsonObjectType {
         jo.put("right","Int");
         jo.put("left","Int");
         jo.put("isSend","String");
+        jo.put("fuse_id","String");
+        jo.put("fuse_count","Int");
         return jo.get(str).toString();
     }
 }
