@@ -14,6 +14,7 @@ import java.util.*;
 
 import static java.lang.Math.abs;
 import static sam.znv.feature.FeatureInfoCommunity.getUUID;
+import static sam.znv.feature.getFeatureFromFile.getFeatureFile;
 
 public class FeatureInfo {
     //242特征
@@ -432,6 +433,9 @@ public class FeatureInfo {
      */
     public static JSONObject getFeatureInfoCluster(String picPath){
         String feature = getFeature(picPath,requestUrl);
+        //本地文件获取特征
+        //String file = "F:\\pictureDir\\feature特征";
+        //String feature = getFeatureFile(picPath,file);
         PicAttr picAttr=getPicAttr(picPath, requestAttrUrl);
         System.out.println(feature);
         System.out.println(picAttr);
