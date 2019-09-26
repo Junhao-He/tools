@@ -29,20 +29,37 @@ public class parseAvroDataConsumer {
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
 
-    private static String path = "D:\\data\\history.txt";
+    private static String path = "D:\\notic\\history.txt";
 
-    private static String bootstrapIp = "10.45.154.210:9092";
-    private static String topic = "fss-history-n-project-v1-2-production-cluster";
+    private static String bootstrapIp = "10.45.157.112:9092";
+    private static String topic = "fss-BlackListChange-n-project-v1-2-production";
     private static RandomAccessFile out_r;
     public static void main(String[] args) {
+        parseAvroData(topic);
+    }
+
+    /**
+     * 加载配置参数
+     * @return
+     */
+    public static Properties loadProperties(){
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapIp);
-        props.put("group.id", "test-2");
+        props.put("group.id", "test-3");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
         props.put("auto.offset.reset","earliest");  //latest, earliest, none
+        return props;
+    }
+
+    /**
+     * 拉取指定topic数据
+     * @param topic 拉取topic名字
+     */
+    public static void parseAvroData(String topic){
+        Properties props = loadProperties();
         // 定义consumer
         KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Arrays.asList(topic));

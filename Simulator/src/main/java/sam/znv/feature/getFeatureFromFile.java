@@ -11,7 +11,6 @@ public class getFeatureFromFile {
     }
 
     /**
-     *
      * @param picPath 传入图片路径
      * @param filePath 传入图片特征路径
      * @return
@@ -59,7 +58,7 @@ public class getFeatureFromFile {
             e.printStackTrace();
         }
         try {
-            return new String(filecontent, encoding);
+            return new String(filecontent, encoding).trim();
         } catch (UnsupportedEncodingException e) {
             System.err.println("The OS does not support " + encoding);
             e.printStackTrace();
