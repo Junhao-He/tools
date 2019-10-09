@@ -19,6 +19,7 @@ public class JsonObjectType {
         jo.put("track_idx","String");
         jo.put("feature","String");
         jo.put("sim_threshold","Float");
+        jo.put("similarity","Float");
         jo.put("msg_source","String");
         jo.put("rt_feature","String");
         jo.put("img_width","Int");
@@ -62,6 +63,21 @@ public class JsonObjectType {
         jo.put("isSend","String");
         jo.put("fuse_id","String");
         jo.put("fuse_count","Int");
+        jo.put("access_source","String");
+        jo.put("uuid","String");
+        jo.put("event_id","Long");
+        jo.put("person_id","String");
+        jo.put("camera_kind","Int");
+        jo.put("lib_id","Int");
+        jo.put("event_type","Int");
+        jo.put("op_time","String");
+        jo.put("is_alarm","String");
+        jo.put("device_kind","Int");
+        jo.put("door_event_id","String");
+        jo.put("birth","String");
+        jo.put("person_name","String");
+        jo.put("control_event_id","String");
+        jo.put("event_time","String");
         return jo.get(str).toString();
     }
 }

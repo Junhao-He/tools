@@ -27,9 +27,9 @@ public class localDataToKafka {
      * @path 指定数据所在的路径
      */
     private static KafkaProducer<String, JSONObject> producer;
-    private static String topic = "fss-analysis-n-project-v1-2-production-lj";
-    private static String bootstrapIp = "10.45.154.210:9092";
-    private static String path = "D:\\StandardTest";
+    private static String topic = "fss-history-n-project-v1-2-production-cluster";
+    private static String bootstrapIp = "10.45.154.209:9092";
+    private static String path = "D:\\liufeng";
 
     public static void main(String[] args) {
         loadProperties();
@@ -57,7 +57,7 @@ public class localDataToKafka {
     public static void sendData(String path){
         File f = new File(path);
         if(f.isDirectory()){
-            String s[] = f.list();
+            String[] s = f.list();
             for(int i=0;i<s.length;i++){
                 sendData(path+"\\"+s[i]);
             }
@@ -76,7 +76,7 @@ public class localDataToKafka {
      * @param filename 传入单个文件路径
      * @throws IOException
      */
-    public static void readFile(String filename) throws IOException {
+    public static void readFile(String filename) throws Exception {
         FileReader fr = new FileReader(filename);
         BufferedReader br = new BufferedReader(fr);
         String [] arrs = null;
@@ -103,6 +103,7 @@ public class localDataToKafka {
                         case "Float" : jo.put(jo1,stringToFloat(jo2));break;
                         case "String" : jo.put(jo1,jo2.toString());break;
                         case "Double" : jo.put(jo1,stringToDoule(jo2));break;
+                        case "Long" : jo.put(jo1,stringToLong(jo2));break;
                         default : jo.put(jo1,jo2.toString());break;
                     }
                 }
@@ -116,7 +117,7 @@ public class localDataToKafka {
      * 发送数据到kafka
      * @param message 发送的消息
      */
-    public static void sendMessage(JSONObject message,String topic) {
+    public static void sendMessage(JSONObject message,String topic) throws Exception {
 
         if (Strings.isEmpty(topic)) {
             return;
@@ -134,12 +135,17 @@ public class localDataToKafka {
                 }
             }
         });
+        Thread.sleep(1);
 
     }
 
     public static int stringToInt(String str)
     {
-        return Integer.parseInt(str);
+        try {
+            return Integer.parseInt(str);
+        }catch (NumberFormatException e){
+            return 0;
+        }
     }
     public static long stringToLong(String str)
     {

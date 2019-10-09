@@ -29,10 +29,10 @@ public class parseAvroDataConsumer {
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
 
-    private static String path = "D:\\notic\\history.txt";
+    private static String path = "D:\\liufeng\\cluster.txt";
 
-    private static String bootstrapIp = "10.45.157.112:9092";
-    private static String topic = "fss-BlackListChange-n-project-v1-2-production";
+    private static String bootstrapIp = "10.45.154.210:9092";
+    private static String topic = "fss-history-n-project-v1-2-production-cluster";
     private static RandomAccessFile out_r;
     public static void main(String[] args) {
         parseAvroData(topic);
@@ -91,7 +91,18 @@ public class parseAvroDataConsumer {
             }
         }
     }
-
+    public static void parseJson(String topic){
+        Properties props = loadProperties();
+        // 定义consumer
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Arrays.asList(topic));
+        while (true){
+            ConsumerRecords<String, String> records = consumer.poll(1000);
+            for (ConsumerRecord<String, String> record : records){
+                System.out.println("*******value**********"+record.value().toString());
+            }
+        }
+    }
     /**
      *topic中数据写入本地某个文件（追加）
      *@param dataString  接收的数据
