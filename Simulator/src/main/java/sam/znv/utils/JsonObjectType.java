@@ -78,6 +78,16 @@ public class JsonObjectType {
         jo.put("person_name","String");
         jo.put("control_event_id","String");
         jo.put("event_time","String");
+        jo.put("reference_id","String");
+        jo.put("primary_id","String");
+        jo.put("table_name","String");
+        jo.put("send_time","String");
+        jo.put("issend","String");
+        jo.put("alarm_level","Int");
+        jo.put("is_valid","String");
+        jo.put("flag_time","String");
+        jo.put("small_picture_url","String");
+        jo.put("alarm_type","Int");
         return jo.get(str).toString();
     }
 }

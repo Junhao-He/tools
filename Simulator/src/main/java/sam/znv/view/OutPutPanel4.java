@@ -93,7 +93,7 @@ public class OutPutPanel4 extends JPanel {
         labelAlarm.setBounds(40, 120, 100, 30);
         this.add(labelAlarm);
 
-        JTextField alarmLib = new JTextField("2");
+        JTextField alarmLib = new JTextField("20");
         alarmLib.setBounds(160, 120, 50, 30);
         this.add(alarmLib);
 
@@ -101,7 +101,7 @@ public class OutPutPanel4 extends JPanel {
         labelPersonId.setBounds(40, 160, 100, 30);
         this.add(labelPersonId);
 
-        JTextField alarmPersonId = new JTextField("7597655675459787609");
+        JTextField alarmPersonId = new JTextField("3424480353981215276");
         alarmPersonId.setBounds(160, 160, 160, 30);
         this.add(alarmPersonId);
 

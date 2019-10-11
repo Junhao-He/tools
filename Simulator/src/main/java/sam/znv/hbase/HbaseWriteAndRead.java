@@ -132,17 +132,19 @@ public class HbaseWriteAndRead {
         HTable table =(HTable) initHbase().getTable(TableName.valueOf(tableName));
         //rowkey的获取
 
+        /*
         byte[] salt2 = new byte[1];
         byte[] byteKey = Bytes.add((Bytes.toBytes(opTime)), (Bytes.toBytes(uuid)));
         salt2[0] = SaltingUtil.getSaltingByte(byteKey, 0, byteKey.length, 24);
         Put put = new Put(Bytes.add(salt2, byteKey));
         Get get = new Get(Bytes.add(salt2, byteKey));
-        /*
+        */
         byte[] salt2 = new byte[1];
-        byte[] byteKey = Bytes.add((Bytes.toBytes(data.getLIB_ID())), Bytes.toBytes(data.getPERSON_ID()));
+        //byte[] byteKey = Bytes.add((Bytes.toBytes(opTime)), Bytes.toBytes(uuid));
+        byte[] byteKey = Bytes.add((Bytes.toBytes(Integer.parseInt(uuid))), (Bytes.toBytes(opTime)));
         salt2[0] = SaltingUtil.getSaltingByte(byteKey, 0, byteKey.length, 24);
         Put put = new Put(Bytes.add(salt2, byteKey));
-         */
+        Get get = new Get(Bytes.add(salt2, byteKey));
         StringBuffer sb = new StringBuffer();
         if(!get.isCheckExistenceOnly()){
             Result result = table.get(get);

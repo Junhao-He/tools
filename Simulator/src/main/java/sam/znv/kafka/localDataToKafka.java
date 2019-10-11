@@ -27,11 +27,16 @@ public class localDataToKafka {
      * @path 指定数据所在的路径
      */
     private static KafkaProducer<String, JSONObject> producer;
-    private static String topic = "fss-history-n-project-v1-2-production-cluster";
-    private static String bootstrapIp = "10.45.154.209:9092";
-    private static String path = "D:\\liufeng";
+    private static String topic = "fss-history-n-project-v1-2-production-fusion";
+    private static String bootstrapIp = "10.45.154.216:9092";
+    private static String path = "F:\\history\\b.txt";
 
     public static void main(String[] args) {
+        loadProperties();
+        sendData(path);
+    }
+
+    public static void localToKafka(){
         loadProperties();
         sendData(path);
     }
@@ -98,6 +103,7 @@ public class localDataToKafka {
                        jo2 = temp[1];
                     }
                     //判断数据类型，并进行转化，判断类型并进行转化
+                    //System.out.println("----------jo1--------"+jo1);
                     switch (JsonObjectType.objectType(jo1)){
                         case "Int" : jo.put(jo1,stringToInt(jo2));break;
                         case "Float" : jo.put(jo1,stringToFloat(jo2));break;
@@ -146,6 +152,18 @@ public class localDataToKafka {
         }catch (NumberFormatException e){
             return 0;
         }
+    }
+
+    public static void setPath(String path) {
+        localDataToKafka.path = path;
+    }
+
+    public static void setTopic(String topic) {
+        localDataToKafka.topic = topic;
+    }
+
+    public static void setBootstrapIp(String bootstrapIp) {
+        localDataToKafka.bootstrapIp = bootstrapIp;
     }
     public static long stringToLong(String str)
     {

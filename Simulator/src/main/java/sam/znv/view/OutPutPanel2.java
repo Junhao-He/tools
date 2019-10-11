@@ -1,5 +1,8 @@
 package sam.znv.view;
 
+import sam.znv.kafka.localDataToKafka;
+import sam.znv.kafka.parseAvroDataConsumer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +23,11 @@ public class OutPutPanel2 extends JPanel {
     public static String filepath;
     public static String filePathFeature;
 
+    //定义topic数据写入存储位置
+    public static String filePathTopic;
+
+    //定义topic数据读取存储地址
+    public static String fileReadTopicPath;
     public OutPutPanel2() {
         super();
         this.setBackground(Color.white);
@@ -82,5 +90,119 @@ public class OutPutPanel2 extends JPanel {
                 getFeaturePath(filepath,filePathFeature);
             }
         });
+
+        /**
+         * 拉去指定topic数据
+         * 设置 路径，服务器地址，topic
+         */
+        JLabel ipAddrText = new JLabel("指定服务器");
+        ipAddrText.setBounds(40, 140, 100, 30);
+        this.add(ipAddrText);
+
+        JTextField  ipAddr = new JTextField("10.45.154.210");
+        ipAddr.setBounds(160, 140, 120, 30);
+        this.add(ipAddr);
+
+        JLabel pollTopicText = new JLabel("指定拉取topic");
+        pollTopicText.setBounds(40, 180, 100, 30);
+        this.add(pollTopicText);
+
+        JTextField pollTopic = new JTextField("fss-history-n-project-v1-2-production");
+        pollTopic.setBounds(160, 180, 220, 30);
+        this.add(pollTopic);
+
+        JLabel storeDataText = new JLabel("选择存储地址");
+        storeDataText.setBounds(40, 220, 100, 30);
+        this.add(storeDataText);
+
+        JButton selectFileStoreTopicData = new JButton("选择文件");
+        selectFileStoreTopicData.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                JFileChooser chooser = new JFileChooser("./");             //设置选择器
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setMultiSelectionEnabled(true);   //设为多选
+                int returnVal = chooser.showOpenDialog(null);        //是否打开文件选择框
+                System.out.println("returnVal="+returnVal);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
+                    filePathTopic = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
+                    System.out.println("You chose to open this file: "+ chooser.getSelectedFile().getName());  //输出相对路径 }
+                }
+            }
+        });
+        selectFileStoreTopicData.setBounds(160, 220, 100, 30);
+        this.add(selectFileStoreTopicData);
+
+        JButton sendBtnTopic = new JButton("拉取topic数据");
+        sendBtnTopic.setBounds(380, 220, 140, 30);
+        this.add(sendBtnTopic);
+        sendBtnTopic.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("topic数据选择存储位置："+filePathTopic);
+                //设置ip地址
+                parseAvroDataConsumer.setBootstrapIp(ipAddr.getText().trim()+":9092");
+                //设置拉取路径
+                parseAvroDataConsumer.setPath(filePathTopic+"\\a.txt");
+                parseAvroDataConsumer.parseAvroData(pollTopic.getText().trim());
+            }
+        });
+
+        /**
+         * 本地数据 写入指定服务器topic中
+         * 指定服务器，数据地址，topic
+         */
+        JLabel ipAddrWriteText = new JLabel("指定服务器");
+        ipAddrWriteText.setBounds(40, 270, 100, 30);
+        this.add(ipAddrWriteText);
+
+        JTextField  ipAddrWrite = new JTextField("10.45.154.210");
+        ipAddrWrite.setBounds(160, 270, 120, 30);
+        this.add(ipAddrWrite);
+
+        JLabel pushTopicText = new JLabel("指定写入topic");
+        pushTopicText.setBounds(40, 310, 100, 30);
+        this.add(pushTopicText);
+
+        JTextField pushTopic = new JTextField("fss-history-n-project-v1-2-production");
+        pushTopic.setBounds(160, 310, 220, 30);
+        this.add(pushTopic);
+
+        JLabel selectDataText = new JLabel("选择数据地址");
+        selectDataText.setBounds(40, 350, 100, 30);
+        this.add(selectDataText);
+
+        JButton selectFileStoreTopicData2 = new JButton("选择文件");
+        selectFileStoreTopicData2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                JFileChooser chooser = new JFileChooser("./");             //设置选择器
+                chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                chooser.setMultiSelectionEnabled(true);   //设为多选
+                int returnVal = chooser.showOpenDialog(null);        //是否打开文件选择框
+                System.out.println("returnVal="+returnVal);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {          //如果符合文件类型
+                    fileReadTopicPath = chooser.getSelectedFile().getAbsolutePath();      //获取绝对路径
+                }
+            }
+        });
+        selectFileStoreTopicData2.setBounds(160, 350, 100, 30);
+        this.add(selectFileStoreTopicData2);
+
+        JButton writeBtnTopic = new JButton("写入topic数据");
+        writeBtnTopic.setBounds(380, 350, 140, 30);
+        this.add(writeBtnTopic);
+        writeBtnTopic.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("选择topic数据存储位置："+fileReadTopicPath);
+                //设置ip地址
+                localDataToKafka.setBootstrapIp(ipAddrWrite.getText().trim()+":9092");
+                //设置读取路径
+                localDataToKafka.setPath(fileReadTopicPath);
+                //设置拉取topic
+                localDataToKafka.setTopic(pushTopic.getText().trim());
+                localDataToKafka.localToKafka();
+            }
+        });
+
     }
 }

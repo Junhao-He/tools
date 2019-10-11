@@ -24,7 +24,7 @@ public class WindowContainer {
 
     public void initWindow() {
         JFrame frame = new JFrame();     
-        frame.setTitle("模拟器");
+        frame.setTitle("Simulator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setLayout(new BorderLayout());

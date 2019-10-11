@@ -26,7 +26,7 @@ public class SendController {
     public static void sendIdx1(String picPath, int sendcount, int countpersencond){
         System.out.println("*********************"+picPath);
 
-        JSONObject msg= FeatureInfo.getFeatureInfoCluster(picPath);
+        JSONObject msg= FeatureInfo.getFeatureInfoFusionDoor(picPath);
         ZKafkaProducer.getInstance().sendMessage(msg,"");
 
     }

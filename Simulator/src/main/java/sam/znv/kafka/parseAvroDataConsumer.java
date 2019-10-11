@@ -28,12 +28,11 @@ public class parseAvroDataConsumer {
      */
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
-
-    private static String path = "D:\\liufeng\\cluster.txt";
-
+    private static String path = "F:\\history\\a.txt";
     private static String bootstrapIp = "10.45.154.210:9092";
-    private static String topic = "fss-history-n-project-v1-2-production-cluster";
+    private static String topic = "fss-history-n-project-v1-2-production";
     private static RandomAccessFile out_r;
+
     public static void main(String[] args) {
         parseAvroData(topic);
     }
@@ -45,7 +44,7 @@ public class parseAvroDataConsumer {
     public static Properties loadProperties(){
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapIp);
-        props.put("group.id", "test-3");
+        props.put("group.id", "test-9");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -193,5 +192,13 @@ public class parseAvroDataConsumer {
         oos.writeObject(data);
         oos.flush();
         oos.close();
+    }
+
+    public static void setPath(String path) {
+        parseAvroDataConsumer.path = path;
+    }
+
+    public static void setBootstrapIp(String bootstrapIp) {
+        parseAvroDataConsumer.bootstrapIp = bootstrapIp;
     }
 }
