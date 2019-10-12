@@ -44,7 +44,7 @@ public class parseAvroDataConsumer {
     public static Properties loadProperties(){
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapIp);
-        props.put("group.id", "test-9");
+        props.put("group.id", "test-11");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");

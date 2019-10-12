@@ -98,7 +98,7 @@ public final class ZKafkaConsumer {
         System.out.println("press button");
 
         String topic = properties.getProperty("kafka.topic");
-
+        System.out.println("-----------topic------------------"+topic);
         if (Strings.isEmpty(topic)) {
             return null;
         }
