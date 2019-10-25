@@ -25,10 +25,12 @@ public class SendController {
 
     public static void sendIdx1(String picPath, int sendcount, int countpersencond){
         System.out.println("*********************"+picPath);
-
         JSONObject msg= FeatureInfo.getFeatureInfoFusionDoor(picPath);
-        ZKafkaProducer.getInstance().sendMessage(msg,"");
-
+        if(msg.getOrDefault("feature","").equals("") || msg.getOrDefault("feature","").equals("null")){
+            System.out.println("--------没有提取到特征，不发送----------");
+        }else{
+            ZKafkaProducer.getInstance().sendMessage(msg,"");
+        }
     }
 
     public static void sendIdx2(String picPath,String propertiesPath) throws Exception{

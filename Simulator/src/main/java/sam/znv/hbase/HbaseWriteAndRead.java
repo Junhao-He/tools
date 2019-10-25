@@ -69,6 +69,7 @@ public class HbaseWriteAndRead {
         //获取图片特征
         String feature = getFeature(picturePath,stUrl);
         byte[] featureBytes = Base64.getDecoder().decode(feature);
+        String fileName = new File(picturePath).getName();
         ArrayList<String> enterAndLeaveTime1 = getEnterAndLeaveTime1();
         int LIB_ID = libId;
         String PERSON_ID = Math.abs(new Random().nextLong())+"";
@@ -76,7 +77,7 @@ public class HbaseWriteAndRead {
         String CONTROL_END_TIME = enterAndLeaveTime1.get(1);
         int FLAG = 1;
         String BIRTH = enterAndLeaveTime1.get(0);
-        String PERSON_NAME = "hbase";
+        String PERSON_NAME = fileName;
         String CONTROL_EVENT_ID = Math.abs(new Random().nextLong())+"";
         int SEX = 0;
         byte[] FEATURE = featureBytes;
@@ -168,7 +169,7 @@ public class HbaseWriteAndRead {
         return sb.toString();
     }
 
-    public static String getFeature(String picPath,String requestUrl){
+    private static String getFeature(String picPath,String requestUrl){
         String data = GetDataFeature.getImageFeature(picPath,requestUrl);
         String feature = JSON.parseObject(data).getOrDefault("feature","").toString();
         return feature;

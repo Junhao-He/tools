@@ -1,13 +1,8 @@
 package sam.znv.view;
 
-import com.alibaba.fastjson.JSONObject;
 import org.apache.avro.util.Utf8;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import sam.znv.controller.SendController;
 import sam.znv.kafka.ZKafkaConsumer;
-import sam.znv.kafka.ZKafkaProducer;
-import scala.util.control.Exception;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
