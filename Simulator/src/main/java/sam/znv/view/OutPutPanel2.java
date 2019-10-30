@@ -1,7 +1,7 @@
 package sam.znv.view;
 
-import sam.znv.kafka.localDataToKafka;
-import sam.znv.kafka.parseAvroDataConsumer;
+import sam.znv.kafka.LocalDataToKafka;
+import sam.znv.kafka.ParseAvroDataConsumer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -140,10 +140,10 @@ public class OutPutPanel2 extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("topic数据选择存储位置："+filePathTopic);
                 //设置ip地址
-                parseAvroDataConsumer.setBootstrapIp(ipAddr.getText().trim()+":9092");
+                ParseAvroDataConsumer.setBootstrapIp(ipAddr.getText().trim()+":9092");
                 //设置拉取路径
-                parseAvroDataConsumer.setPath(filePathTopic+"\\a.txt");
-                parseAvroDataConsumer.parseAvroData(pollTopic.getText().trim());
+                ParseAvroDataConsumer.setPath(filePathTopic+"\\a.txt");
+                ParseAvroDataConsumer.parseAvroData(pollTopic.getText().trim());
             }
         });
 
@@ -195,12 +195,12 @@ public class OutPutPanel2 extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("选择topic数据存储位置："+fileReadTopicPath);
                 //设置ip地址
-                localDataToKafka.setBootstrapIp(ipAddrWrite.getText().trim()+":9092");
+                LocalDataToKafka.setBootstrapIp(ipAddrWrite.getText().trim()+":9092");
                 //设置读取路径
-                localDataToKafka.setPath(fileReadTopicPath);
+                LocalDataToKafka.setPath(fileReadTopicPath);
                 //设置拉取topic
-                localDataToKafka.setTopic(pushTopic.getText().trim());
-                localDataToKafka.localToKafka();
+                LocalDataToKafka.setTopic(pushTopic.getText().trim());
+                LocalDataToKafka.localToKafka();
             }
         });
 

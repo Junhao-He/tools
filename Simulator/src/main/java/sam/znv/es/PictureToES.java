@@ -24,7 +24,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 /**
  * 将图片转化，构造字段发往es名单库中
  */
-public class pictureToES {
+public class PictureToES {
 
     /**
      * @clusterName 设置es集群名字

@@ -394,7 +394,7 @@ public class FeatureInfo {
         cameraIds.add("32011500001310000002");
 
 //        jo.put("camera_id",cameraIds.get(id%15));
-        jo.put("camera_id","32010400001310007002");
+        jo.put("camera_id","32011500001310000004");
         jo.put("enter_time",entertime);
         jo.put("leave_time",leavetime);
         jo.put("duration_time",1);

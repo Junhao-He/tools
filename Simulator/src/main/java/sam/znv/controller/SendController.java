@@ -25,7 +25,7 @@ public class SendController {
 
     public static void sendIdx1(String picPath, int sendcount, int countpersencond){
         System.out.println("*********************"+picPath);
-        JSONObject msg= FeatureInfo.getFeatureInfoFusionDoor(picPath);
+        JSONObject msg= FeatureInfo.getFeatureInfoFusion_community_camera(picPath);
         if(msg.getOrDefault("feature","").equals("") || msg.getOrDefault("feature","").equals("null")){
             System.out.println("--------没有提取到特征，不发送----------");
         }else{

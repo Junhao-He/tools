@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 /**
  * Created by 86157 on 2019/9/6.
  */
-public class localDataToKafka {
+public class LocalDataToKafka {
 
     /**
      * 加载本地数据发送kafka
@@ -27,9 +27,10 @@ public class localDataToKafka {
      * @path 指定数据所在的路径
      */
     private static KafkaProducer<String, JSONObject> producer;
-    private static String topic = "fss-history-n-project-v1-2-production-fusion";
-    private static String bootstrapIp = "10.45.154.216:9092";
-    private static String path = "F:\\history\\b.txt";
+    private static String topic = "fss-analysis-n-project-v1-2-production-testFusion-2";
+    private static String bootstrapIp = "10.45.154.210:9092";
+    //
+    private static String path = "F:\\TestFusionData";
 
     public static void main(String[] args) {
         loadProperties();
@@ -155,15 +156,15 @@ public class localDataToKafka {
     }
 
     public static void setPath(String path) {
-        localDataToKafka.path = path;
+        LocalDataToKafka.path = path;
     }
 
     public static void setTopic(String topic) {
-        localDataToKafka.topic = topic;
+        LocalDataToKafka.topic = topic;
     }
 
     public static void setBootstrapIp(String bootstrapIp) {
-        localDataToKafka.bootstrapIp = bootstrapIp;
+        LocalDataToKafka.bootstrapIp = bootstrapIp;
     }
     public static long stringToLong(String str)
     {
