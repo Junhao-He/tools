@@ -2,7 +2,7 @@ package sam.znv.feature;
 
 import java.io.*;
 
-public class getFeatureFromFile {
+public class GetFeatureFromFile {
     public static void main(String[] args) {
         String file = "F:\\pictureDir\\feature特征";
         String pic = "E:\\cq_data\\[1-209]-7505fc64-be4a-4947-97c7-a799811a34d7\\0b38517728254adda16c386ab6f7e81c.jpg";

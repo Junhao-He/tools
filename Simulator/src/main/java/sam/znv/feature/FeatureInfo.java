@@ -14,7 +14,6 @@ import java.util.*;
 
 import static java.lang.Math.abs;
 import static sam.znv.feature.FeatureInfoCommunity.getUUID;
-import static sam.znv.feature.getFeatureFromFile.getFeatureFile;
 
 public class FeatureInfo {
     //242特征
@@ -71,8 +70,8 @@ public class FeatureInfo {
         jo.put("sendIdx", 2);
         jo.put("trackIdx", trackid);
         jo.put("msgSource", "camera");
-        jo.put("smallPictureUrl", "http,//10.45.152.148,9008/GetSmallPic?6e556154a7f14093b1c535a4807a6ff5");
-        jo.put("bigPictureUrl", "http,//10.45.152.148,9008/GetPictureUrl/fastdfs_6e556154a7f14093b1c535a4807a6ff5");
+        jo.put("smallPictureUrl", "http://10.45.152.148:9008/GetSmallPic?6e556154a7f14093b1c535a4807a6ff5");
+        jo.put("bigPictureUrl", "http://10.45.152.148:9008/GetPictureUrl/fastdfs_6e556154a7f14093b1c535a4807a6ff5");
         jo.put("dwFaceScore", 95.0);
         jo.put("simThreshold", 0.93);
         jo.put("bigPicturePath", "fastdfs_6e556154a7f14093b1c535a4807a6ff5");
@@ -367,8 +366,8 @@ public class FeatureInfo {
         String feature = getFeature(picPath,requestUrl);
         PicAttr picAttr=getPicAttr(picPath, requestAttrUrl);
 
-        System.out.println(feature);
-        System.out.println(picAttr);
+        //System.out.println(feature);
+        //System.out.println(picAttr);
 
         ArrayList<String> enterleave=getEnterAndLeaveTime1();
         String entertime = enterleave.get(0);

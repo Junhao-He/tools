@@ -34,11 +34,11 @@ public class PictureToES {
      * @path 图片对应的路径
      */
     private static final String stUrl = "http://10.45.157.115:80/verify/feature/gets";
-    private static String cluseterName = "lv210.dct-znv.com-es";
-    private static String transportHosts = "10.45.154.210";
+    private static String cluseterName = "face.dct-znv.com-es";
+    private static String transportHosts = "10.45.157.112";
     private static String index = "person_list_data_n_project_v1_2";
     private static String type = "person_list";
-    private static String path = "F:\\pictureDir\\[1-178]-7505fc64-be4a-4947-97c7-a799811a34d7";
+    private static String path = "D:\\流处理标准测试\\流处理准确性测试\\布控人员图片\\face";
 
     public static final String DATE_FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss";
     private static TransportClient client = getEsTransportClient(cluseterName, transportHosts);

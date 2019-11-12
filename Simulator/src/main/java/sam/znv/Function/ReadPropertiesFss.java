@@ -15,16 +15,16 @@ import static sam.znv.feature.FeatureInfo.*;
 /**
  * Created by 86157 on 2019/7/24.
  */
-public class readPropertiesFss {
+public class ReadPropertiesFss {
     static String requestUrl = "http://10.45.157.115:80/verify/feature/gets";
     static String requestAttrUrl = "http://10.45.157.115:80/verify/attribute/gets";
     static String picturePath = "F:\\picture\\fss_test.jpg";
-    static String path= "F:\\kafka_producer.properties";
+    static String path= "F:\\field.properties";
 
     public static void main(String[] args) throws Exception {
         readFileFss(path,picturePath);
     }
-    /*
+    /**
     1、读取文件默认里面获取某个值；
     2、没有的话匹配字段类型；
     3、默认值填充；

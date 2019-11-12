@@ -3,7 +3,7 @@ package sam.znv.controller;
 import java.io.*;
 
 import com.alibaba.fastjson.JSONObject;
-import sam.znv.Function.readPropertiesFss;
+import sam.znv.Function.ReadPropertiesFss;
 import sam.znv.feature.FeatureInfo;
 import sam.znv.kafka.ZKafkaProducer;
 
@@ -36,7 +36,7 @@ public class SendController {
     public static void sendIdx2(String picPath,String propertiesPath) throws Exception{
         System.out.println("*********picPath************"+picPath);
         System.out.println("**********propertiesPath***********"+propertiesPath);
-        JSONObject msg= readPropertiesFss.readFileFss(propertiesPath,picPath);
+        JSONObject msg= ReadPropertiesFss.readFileFss(propertiesPath,picPath);
         ZKafkaProducer.getInstance().sendMessage(msg,"");
     }
 

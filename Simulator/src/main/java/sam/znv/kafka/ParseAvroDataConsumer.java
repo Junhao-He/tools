@@ -28,7 +28,7 @@ public class ParseAvroDataConsumer {
      */
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
-    private static String path = "F:\\TestFusionData\\a.txt";
+    private static String path = "F:\\TestFusionRealData230\\a.txt";
     private static String bootstrapIp = "10.45.152.230:9092";
     private static String topic = "fss-analysis-n-project-v1-2-production";
     private static RandomAccessFile out_r;

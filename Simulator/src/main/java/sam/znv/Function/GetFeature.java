@@ -13,7 +13,7 @@ import sam.znv.utils.GetDataFeature;
  * 输出特征路径地址，命名为：原文件名.feature
  * 保存上一路径格式
  */
-public class getFeature {
+public class GetFeature {
 
     static String requestUrl = "http://10.45.157.115:80/verify/feature/gets";
     //图片输入路径

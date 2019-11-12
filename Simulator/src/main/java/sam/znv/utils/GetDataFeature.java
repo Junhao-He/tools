@@ -13,9 +13,8 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class GetDataFeature {
-	private static Logger logger = LogManager.getLogger(GetDataFeature.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GetDataFeature.class);
 
 	/**
 	 * 通过图片二进制数据流获取图片特征值或特征属性
@@ -400,7 +399,7 @@ public class GetDataFeature {
 	public static void main(String[] args) {
 		Decoder base64decoder = java.util.Base64.getDecoder();
 
-		Logger logger = LogManager.getLogger(GetDataFeature.class);
+//		Logger logger = LogManager.getLogger(GetDataFeature.class);
 		String url = "http://10.45.157.115:80/verify/feature/gets";
 		String filePath = "D:\\pictures\\zs.jpg";
 		// logger.warn(getImageFeature(filePath, url));
@@ -421,6 +420,6 @@ public class GetDataFeature {
 
 		System.out.println(feature1);
 
-		logger.info(feature1);
+		LOGGER.info(feature1);
 	}
 }

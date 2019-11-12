@@ -126,6 +126,8 @@ public class JsonObjectType {
         jo.put("camera_address","String");
         jo.put("small_picture_path","String");
         jo.put("big_picture_path","String");
+        jo.put("channel","String");
+        jo.put("encoder_id","String");
         return jo.get(str).toString();
     }
 }

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author HuangRu
  */
 public final class ZKafkaProducer {
-    Logger logger = LoggerFactory.getLogger(ZKafkaProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKafkaProducer.class);
     private static ZKafkaProducer instance = null;
 
     private KafkaProducer<String, JSONObject> producer;
@@ -54,15 +54,15 @@ public final class ZKafkaProducer {
             fs = this.getClass().getClassLoader().getResourceAsStream("kafka_producer.properties");
             properties.load(fs);
         } catch (FileNotFoundException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         } finally {
             if (fs != null) {
                 try {
                     fs.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage());
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -105,16 +105,16 @@ public final class ZKafkaProducer {
         if (Strings.isEmpty(topic)) {
             return;
         }
-        System.out.println("******topic*****"+topic+"********message*****"+message);
+        LOGGER.info("******topic*****"+topic+"********message*****"+message);
         ProducerRecord<String, JSONObject> data = new ProducerRecord(topic, null, message);
 
         Future<RecordMetadata> res = producer.send(data, new Callback() {
             @Override
             public void onCompletion(RecordMetadata metadata, Exception exception) {
                 if(exception == null){
-                    System.out.println("发送成功！！！");
+                    LOGGER.info("发送成功！！！");
                 }else{
-                    System.out.println("发送失败！！！");
+                    LOGGER.info("发送失败！！！");
                 }
             }
         });
@@ -145,7 +145,7 @@ public final class ZKafkaProducer {
 
         public void onCompletion(RecordMetadata metadata, Exception exception) {
             if (exception != null) {
-                logger.error("Error sending message: {} ", exception.getMessage());
+                LOGGER.error("Error sending message: {} ", exception.getMessage());
             }
         }
     }

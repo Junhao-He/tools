@@ -51,7 +51,7 @@ public class HbaseWriteAndRead {
         if(f.isDirectory()){
             String[] lists = f.list();
             for(String list : lists){
-                writeHbase(path+"\\"+list,libId);
+                writeHbase(path+File.separator+list,libId);
             }
         }else{
             DataBean dataBean = writeOneData(path,libId);
@@ -144,7 +144,7 @@ public class HbaseWriteAndRead {
         //byte[] byteKey = Bytes.add((Bytes.toBytes(opTime)), Bytes.toBytes(uuid));
         byte[] byteKey = Bytes.add((Bytes.toBytes(Integer.parseInt(uuid))), (Bytes.toBytes(opTime)));
         salt2[0] = SaltingUtil.getSaltingByte(byteKey, 0, byteKey.length, 24);
-        Put put = new Put(Bytes.add(salt2, byteKey));
+        //Put put = new Put(Bytes.add(salt2, byteKey));
         Get get = new Get(Bytes.add(salt2, byteKey));
         StringBuffer sb = new StringBuffer();
         if(!get.isCheckExistenceOnly()){

@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static sam.znv.Function.getFeature.getFeaturePath;
+import static sam.znv.Function.GetFeature.getFeaturePath;
 
 /**
  * Created by 86157 on 2019/7/11.
