@@ -5,6 +5,7 @@ import java.io.*;
 import com.alibaba.fastjson.JSONObject;
 import sam.znv.Function.ReadPropertiesFss;
 import sam.znv.feature.FeatureInfo;
+import sam.znv.feature.FeatureInfoCommunity;
 import sam.znv.kafka.ZKafkaProducer;
 
 public class SendController {

@@ -153,4 +153,10 @@ public class DataBean {
     public void setIS_DEL(String IS_DEL) {
         this.IS_DEL = IS_DEL;
     }
+
+    @Override
+    public String toString() {
+        return "LIB:"+getLIB_ID()+"PERSON_ID:"+getPERSON_ID()+"CONTROL_START_TIME:"+getCONTROL_EVENT_ID()
+                +"CONTROL_END_TIME"+getCONTROL_END_TIME()+"PERSON_NAME"+getPERSON_NAME();
+    }
 }

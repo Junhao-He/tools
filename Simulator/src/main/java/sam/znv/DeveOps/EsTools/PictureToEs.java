@@ -1,51 +1,51 @@
-package sam.znv.es;
+package sam.znv.DeveOps.EsTools;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import sam.znv.hbase.DataBean;
 import sam.znv.utils.GetDataFeature;
-
+import sam.znv.utils.ReadProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Random;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import java.util.*;
+
 
 /**
- * 将图片转化，构造字段发往es名单库中
+ * @Author LiuJun
+ * @create 2019/11/26 16:22
  */
-public class PictureToES {
-
-    /**
-     * @clusterName 设置es集群名字
-     * @transportHosts 设置连接地址
-     * @index 索引
-     * @type 类型
-     * @path 图片对应的路径
-     */
-    private static final String stUrl = "http://10.45.157.115:80/verify/feature/gets";
+public class PictureToEs {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PictureToEs.class);
+    private static Properties pro;
+    private static String stUrl = "http://10.45.157.115:80/verify/feature/gets";
     private static String cluseterName = "lv210.dct-znv.com-es";
     private static String transportHosts = "10.45.154.210";
-    private static String index = "person_list_data_n_project_v1_2-2";
+    private static String index = "person_list_data_n_project_v1_2";
     private static String type = "person_list";
-    private static String path = "D:\\流处理标准测试\\流处理准确性测试\\布控人员图片\\face";
-
     public static final String DATE_FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss";
-    private static TransportClient client = getEsTransportClient(cluseterName, transportHosts);
-    private static BulkRequestBuilder bulkRequest = client.prepareBulk();
+    private static TransportClient client;
+    private static BulkRequestBuilder bulkRequest;
     private static int sendCount = 0;
-    public static void main(String[] args) throws IOException {
-        writeES(path,1);
+
+    public static void initEs(Properties pro){
+        stUrl = pro.getProperty("sensetimeUrl");
+        cluseterName = pro.getProperty("es_clusterName");
+        transportHosts = pro.getProperty("transportHosts");
+        index = pro.getProperty("index");
+        type = pro.getProperty("type");
+        client = getEsTransportClient(cluseterName, transportHosts);
+        bulkRequest = client.prepareBulk();
     }
 
     /**
@@ -58,13 +58,14 @@ public class PictureToES {
         if(f.isDirectory()){
             String[] lists = f.list();
             for(String list : lists){
-                writeES(path+"\\"+list,libId);
+                writeES(path+File.separator+list,libId);
             }
         }else{
             DataBean dataBean = writeOneData(path,libId);
             inserData(dataBean);
             sendCount +=1;
-            System.out.println("发送第"+sendCount);
+            LOGGER.info("发送第"+sendCount+"条");
+            LOGGER.info(""+dataBean);
         }
     }
 
@@ -88,30 +89,9 @@ public class PictureToES {
         json.put("feature",data.getFEATURE());
         json.put("personlib_type",data.getPERSONLIB_TYPE());
         json.put("is_del",data.getIS_DEL());
-        String coarse_id = index.split("-")[1];
-        json.put("coarse_id",coarse_id);
         String docId = json.getString("lib_id") + json.getString("person_id");
         bulkRequest.add(client.prepareIndex(index,type,docId).setSource(json));
         bulkRequest.get();
-    }
-
-    public static TransportClient getEsTransportClient(String clusterName, String... transportHosts) {
-        TransportClient client = null;
-        try {
-            Settings settings = Settings.builder().put("cluster.name", clusterName).build();
-            TransportAddress[] addresses = new TransportAddress[transportHosts.length];
-            int i = 0;
-            for (String host : transportHosts) {
-                host = host.replaceAll("http://", "");
-                String[] inet = host.split(":");
-                addresses[i++] = new InetSocketTransportAddress(InetAddress.getByName(inet[0]), 9300);
-            }
-            client = new PreBuiltTransportClient(settings).addTransportAddresses(addresses);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return client;
     }
 
     /**
@@ -148,18 +128,6 @@ public class PictureToES {
         return feature;
     }
 
-    private static ArrayList<String> getEnterAndLeaveTime1(){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-        String entertime = df.format(date);
-        long time=date.getTime()-1000*60*60*24*30; //这是毫秒数
-        String leavetime = df.format(time);
-        ArrayList<String> tt = new ArrayList<>();
-        tt.add(entertime);
-        tt.add(leavetime);
-        return tt;
-    }
-
     /**
      * String转成Date
      * @param date
@@ -173,5 +141,48 @@ public class PictureToES {
         } catch (ParseException e) {
         }
         return null;
+    }
+
+    public static TransportClient getEsTransportClient(String clusterName, String... transportHosts) {
+        TransportClient client = null;
+        try {
+            Settings settings = Settings.builder().put("cluster.name", clusterName).build();
+            TransportAddress[] addresses = new TransportAddress[transportHosts.length];
+            int i = 0;
+            for (String host : transportHosts) {
+                host = host.replaceAll("http://", "");
+                String[] inet = host.split(":");
+                addresses[i++] = new InetSocketTransportAddress(InetAddress.getByName(inet[0]), 9300);
+            }
+            client = new PreBuiltTransportClient(settings).addTransportAddresses(addresses);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return client;
+    }
+
+    private static ArrayList<String> getEnterAndLeaveTime1(){
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        String entertime = df.format(date);
+        long time=date.getTime()-1000*60*60*24*30; //这是毫秒数
+        String leavetime = df.format(time);
+        ArrayList<String> tt = new ArrayList<>();
+        tt.add(entertime);
+        tt.add(leavetime);
+        return tt;
+    }
+
+    public static void main(String[] args) {
+        pro = ReadProperties.getProperties(args[0]);
+        initEs(pro);
+        int lib = Integer.parseInt(pro.getProperty("lib"));
+        try {
+            writeES(pro.getProperty("path"),lib);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

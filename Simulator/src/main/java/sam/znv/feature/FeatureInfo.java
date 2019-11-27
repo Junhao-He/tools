@@ -567,7 +567,7 @@ public class FeatureInfo {
         ArrayList<String> enterleave=getEnterAndLeaveTime1();
         String send_time = enterleave.get(0);
         jo.put("send_time",send_time);
-        jo.put("reference_id","");
+        jo.put("reference_id",null);
         jo.put("primary_id",lib_id);
         jo.put("msg_type","Dfss-BlackListChange-n-project-v1-2");
         jo.put("table_name",table_name);
