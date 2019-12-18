@@ -9,6 +9,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import sam.znv.hbase.DataBean;
+import sam.znv.lopq.CoarseClassify;
+import sam.znv.lopq.LOPQModel;
 import sam.znv.utils.GetDataFeature;
 import sam.znv.utils.ReadProperties;
 import org.slf4j.Logger;
@@ -28,17 +30,17 @@ import java.util.*;
 public class PictureToEs {
     private static final Logger LOGGER = LoggerFactory.getLogger(PictureToEs.class);
     private static Properties pro;
-    private static String stUrl = "http://10.45.157.115:80/verify/feature/gets";
-    private static String cluseterName = "lv210.dct-znv.com-es";
-    private static String transportHosts = "10.45.154.210";
-    private static String index = "person_list_data_n_project_v1_2";
-    private static String type = "person_list";
+    private static String stUrl;
+    private static String cluseterName;
+    private static String transportHosts;
+    private static String index;
+    private static String type;
     public static final String DATE_FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss";
     private static TransportClient client;
     private static BulkRequestBuilder bulkRequest;
     private static int sendCount = 0;
 
-    public static void initEs(Properties pro){
+    public static void initEs(){
         stUrl = pro.getProperty("sensetimeUrl");
         cluseterName = pro.getProperty("es_clusterName");
         transportHosts = pro.getProperty("transportHosts");
@@ -90,7 +92,15 @@ public class PictureToEs {
         json.put("personlib_type",data.getPERSONLIB_TYPE());
         json.put("is_del",data.getIS_DEL());
         String docId = json.getString("lib_id") + json.getString("person_id");
-        bulkRequest.add(client.prepareIndex(index,type,docId).setSource(json));
+        if(index.endsWith("-")){
+            //加载coarse_id
+            String classify = CoarseClassify.getClassify(data.getFEATURE());
+            json.put("coarse_id",classify);
+            String indexMulit = index.split("-")[0]+"-"+classify;
+            bulkRequest.add(client.prepareIndex(indexMulit,type,docId).setSource(json));
+        }else{
+            bulkRequest.add(client.prepareIndex(index,type,docId).setSource(json));
+        }
         bulkRequest.get();
     }
 
@@ -175,8 +185,15 @@ public class PictureToEs {
     }
 
     public static void main(String[] args) {
+
+        initEs();
+        // 加载粗分类模型
+        try {
+            LOPQModel.loadProto(PictureToEs.class.getResourceAsStream("/lopq/lopq_model_V1.0_D512_C36.lopq"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         pro = ReadProperties.getProperties(args[0]);
-        initEs(pro);
         int lib = Integer.parseInt(pro.getProperty("lib"));
         try {
             writeES(pro.getProperty("path"),lib);

@@ -139,7 +139,7 @@ public class FeatureInfo {
         jo.put("access_source","community");
         jo.put("top",0);
         jo.put("face_pass_num","");
-        jo.put("small_picture_url", "http,//10.45.152.148,9008/GetSmallPic?6e556154a7f14093b1c535a4807a6ff5");
+        jo.put("small_picture_url", "http://10.45.152.148:9008/GetSmallPic?6e556154a7f14093b1c535a4807a6ff5");
         jo.put("big_picture_url","");
         jo.put("office_id","");
         jo.put("event_type", 2001);

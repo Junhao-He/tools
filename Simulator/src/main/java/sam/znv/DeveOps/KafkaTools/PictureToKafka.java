@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sam.znv.feature.FeatureInfo;
 import sam.znv.utils.ReadProperties;
 
 import java.io.File;
@@ -92,7 +91,6 @@ public class PictureToKafka {
         if(msg.getOrDefault("feature","").equals("") || msg.getOrDefault("feature","").equals("null")){
             LOGGER.info("--------没有提取到特征，不发送----------");
         }else{
-
             sendMessage(msg);
         }
     }
@@ -113,10 +111,19 @@ public class PictureToKafka {
     }
 
     public static void main(String[] args) {
+
         pro = ReadProperties.getProperties(args[0]);
         msgType = pro.getProperty("kafka.msgtype");
         topic = pro.getProperty("kafka.topic");
+        //设置商汤提取特征地址及camera_id
+        String requestUrl = pro.getProperty("requestUrl","http://10.45.157.115:80/verify/feature/gets");
+        FeatureInfo.setRequestUrl(requestUrl);
+        String requestAttrUrl = pro.getProperty("requestAttrUrl","http://10.45.157.115:80/verify/attribute/gets");
+        FeatureInfo.setRequestAttrUrl(requestAttrUrl);
+        String cameraId = pro.getProperty("cameraId","32010400001310007002");
+        FeatureInfo.setCameraId(cameraId);
         initKafka();
         sendPic(pro.getProperty("picturePath"));
+
     }
 }

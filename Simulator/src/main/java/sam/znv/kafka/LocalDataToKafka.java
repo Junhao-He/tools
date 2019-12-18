@@ -27,10 +27,10 @@ public class LocalDataToKafka {
      * @path 指定数据所在的路径
      */
     private static KafkaProducer<String, JSONObject> producer;
-    private static String topic = "fss-analysis-n-project-v1-2-fusion-test-3";
-    private static String bootstrapIp = "10.45.154.210:9092";
+    private static String topic = "community_test_wp1";
+    private static String bootstrapIp = "10.45.154.218:9092";
     //
-    private static String path = "F:\\TestFusionData";
+    private static String path = "F:\\TestFusionRealData21899";
 
     public static void main(String[] args) {
         loadProperties();

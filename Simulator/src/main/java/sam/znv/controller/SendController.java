@@ -5,7 +5,6 @@ import java.io.*;
 import com.alibaba.fastjson.JSONObject;
 import sam.znv.Function.ReadPropertiesFss;
 import sam.znv.feature.FeatureInfo;
-import sam.znv.feature.FeatureInfoCommunity;
 import sam.znv.kafka.ZKafkaProducer;
 
 public class SendController {
@@ -26,7 +25,7 @@ public class SendController {
 
     public static void sendIdx1(String picPath, int sendcount, int countpersencond){
         System.out.println("*********************"+picPath);
-        JSONObject msg= FeatureInfo.getFeatureInfoFusion_community_camera(picPath);
+        JSONObject msg= FeatureInfo.getFeatureInfoFusionDoor(picPath);
         if(msg.getOrDefault("feature","").equals("") || msg.getOrDefault("feature","").equals("null")){
             System.out.println("--------没有提取到特征，不发送----------");
         }else{
