@@ -27,16 +27,18 @@ public class Es2Kafka {
 
     private static String cluseterName = "lv210.dct-znv.com-es";
     private static String transportHosts = "10.45.154.210";
-    private static String index = "person_list_data_n_project_v1_2";
+    private static String index = "person_list_data_n_project_v1_2-2";
     private static TransportClient client ;
     private static List<JSONObject> datas = new ArrayList<>(1000);
     public static String bootstrap = "10.45.154.217:9092";
-    public static String topic = "test-4";
+    public static String topic = "test-7";
     public static KafkaProducer<String, JSONObject> producer;
 
     public static void main(String[] args) {
         initKafkaAndEs();
         readEsToKafka();
+        producer.close();
+
     }
 
     private static void initKafkaAndEs() {
@@ -65,7 +67,7 @@ public class Es2Kafka {
                 if (datas.size() >= 1000) {
                     //数据丢到kafka中
                     writeKafka(datas);
-                    System.out.println("---写入文件大小------"+datas.size());
+                    System.out.println("---写入文件大小 一------"+datas.size());
                     datas = new ArrayList<>(1000);
                 }
             }
@@ -75,7 +77,7 @@ public class Es2Kafka {
         if (datas.size() > 0) {
             //数据丢到kafka中
             writeKafka(datas);
-            System.out.println("---写入文件大小------"+datas.size());
+            System.out.println("---写入文件大小 二------"+datas.size());
             datas = new ArrayList<>(1000);
         }
 
@@ -88,7 +90,7 @@ public class Es2Kafka {
                 @Override
                 public void onCompletion(RecordMetadata metadata, Exception exception) {
                     if(exception == null){
-                        //System.out.println("发送成功！！");
+                        System.out.println("发送成功！！");
                     }else{
                         System.out.println("发送失败！！！");
                     }
