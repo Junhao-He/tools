@@ -36,9 +36,9 @@ public class PictureToES {
      * @path 图片对应的路径
      */
     private static final String stUrl = "http://10.45.157.115:80/verify/feature/gets";
-    private static String cluseterName = "lv210.dct-znv.com-es";
-    private static String transportHosts = "10.45.154.210";
-    private static String index = "person_list_data_n_project_v1_2-*";
+    private static String cluseterName = "face.dct-znv.com-es";
+    private static String transportHosts = "10.45.157.112";
+    private static String index = "person_list_data_n_project_v1_2";
     private static TransportClient client ;
     private static BulkRequestBuilder bulkRequest;
 
@@ -53,7 +53,7 @@ public class PictureToES {
         bulkRequest = client.prepareBulk();
         // 加载粗分类模型
         LOPQModel.loadProto(PictureToES.class.getResourceAsStream("/lopq/lopq_model_V1.0_D512_C36.lopq"));
-        writeES(path,2);
+        writeES(path,3);
     }
 
     /**
@@ -100,7 +100,7 @@ public class PictureToES {
         if(index.endsWith("-")){
             //加载coarse_id
             String classify = CoarseClassify.getClassify(data.getFEATURE());
-            json.put("coarse_id",classify);
+            json.put("person_coarse_id",classify);
             String indexMulit = index.split("-")[0]+"-"+classify;
             bulkRequest.add(client.prepareIndex(indexMulit,type,docId).setSource(json));
         }else{
