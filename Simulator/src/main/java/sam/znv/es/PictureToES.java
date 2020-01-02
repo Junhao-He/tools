@@ -100,7 +100,7 @@ public class PictureToES {
         if(index.endsWith("-")){
             //加载coarse_id
             String classify = CoarseClassify.getClassify(data.getFEATURE());
-            json.put("person_coarse_id",classify);
+            json.put("coarse_id",classify);
             String indexMulit = index.split("-")[0]+"-"+classify;
             bulkRequest.add(client.prepareIndex(indexMulit,type,docId).setSource(json));
         }else{
