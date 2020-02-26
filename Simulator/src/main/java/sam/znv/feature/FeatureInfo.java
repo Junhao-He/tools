@@ -16,12 +16,26 @@ import static java.lang.Math.abs;
 import static sam.znv.feature.FeatureInfoCommunity.getUUID;
 
 public class FeatureInfo {
-    //242特征
+    /**
+     * 242特征
+     */
     static String requestUrl = "http://10.45.157.115:80/verify/feature/gets";
     static String requestAttrUrl = "http://10.45.157.115:80/verify/attribute/gets";
-    //245特征
-    //static String requestUrl = "http://10.45.154.193:80/verify/feature/gets";
-    //static String requestAttrUrl = "http://10.45.154.193:80/verify/attribute/gets";
+    /**
+     * 245特征
+     */
+    /**
+     static String requestUrl = "http://10.45.154.193:80/verify/feature/gets";
+     static String requestAttrUrl = "http://10.45.154.193:80/verify/attribute/gets";
+     */
+    /**
+     *246特征
+     *
+     */
+    /**
+    public static final String requestUrl = "http://10.45.154.129:80/verify/feature/gets";
+    public static final String requestAttrUrl = "http://10.45.154.129:80/verify/attribute/gets";
+    */
     public static String getTrackIdx(){
         Date now = new Date();
         long ts = now.getTime();

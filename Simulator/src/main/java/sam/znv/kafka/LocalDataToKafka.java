@@ -100,8 +100,14 @@ public class LocalDataToKafka {
                        jo1 = temp[0].toString();
                        jo2 = "";
                     }else {
-                       jo1 = temp[0].toString();
-                       jo2 = temp[1];
+                        //针对特征中可能存在=的情况
+                        if(temp[0].equals("feature")){
+                            jo1 = temp[0].toString();
+                            jo2 = arr.substring(arr.indexOf("=") + 1);
+                        }else{
+                            jo1 = temp[0].toString();
+                            jo2 = temp[1];
+                        }
                     }
                     //判断数据类型，并进行转化，判断类型并进行转化
                     //System.out.println("----------jo1--------"+jo1);

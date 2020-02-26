@@ -38,7 +38,8 @@ public class PictureToES {
     private static final String stUrl = "http://10.45.157.115:80/verify/feature/gets";
     private static String cluseterName = "face.dct-znv.com-es";
     private static String transportHosts = "10.45.157.112";
-    private static String index = "person_list_data_n_project_v1_2";
+    //如果是单索引：person_list_data_n_project_v1_2，多索引：person_list_data_n_project_v1_2- ;
+    private static String index = "person_list_data_n_project_v1_2_liujun";
     private static TransportClient client ;
     private static BulkRequestBuilder bulkRequest;
 
