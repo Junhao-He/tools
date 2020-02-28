@@ -61,7 +61,7 @@ def get_data_from_es(name, es_name, doc_type, query=[]):
     # file_path = name+'.json'
     # with open(file_path, 'a') as f:
     #     json.dump(l, f, indent=2)
-    return l, str(len(l)//1000)+'w'
+    return l
 
 
 def read_es(name, es_name, doc_type, query=[]):
@@ -105,4 +105,4 @@ def read_es(name, es_name, doc_type, query=[]):
     # file_path = name+'.json'
     # with open(file_path, 'a') as f:
     #     json.dump(l, f, indent=2)
-    return l, str(len(l)//1000)+'w'
+    return l
