@@ -28,9 +28,9 @@ public class ParseAvroDataConsumer {
      */
     private static FileOutputStream fos = null;
     private static ObjectOutputStream oos = null;
-    private static String path = "F:\\TestFusionRealData21899\\a.txt";
-    private static String bootstrapIp = "10.45.154.218:9092";
-    private static String topic = "fusion_fss_test_wp";
+    private static String path = "E:\\TestFusionRealData176\\a.txt";
+    private static String bootstrapIp = "10.45.154.176:9092";
+    private static String topic = "fss-history-n-project-v1-2-production";
     private static RandomAccessFile out_r;
 
     public static void main(String[] args) {
@@ -44,7 +44,7 @@ public class ParseAvroDataConsumer {
     public static Properties loadProperties(){
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapIp);
-        props.put("group.id", "test-12");
+        props.put("group.id", "test-123");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
