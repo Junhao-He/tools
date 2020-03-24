@@ -179,12 +179,6 @@
             <artifactId>javacv-platform</artifactId>
             <version>1.4.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.bytedeco</groupId>-->
-            <!--<artifactId>javacpp</artifactId>-->
-            <!--<version>1.4.1</version>-->
-        <!--</dependency>-->
-
         <!-- https://mvnrepository.com/artifact/org.openpnp/opencv -->
         <dependency>
             <groupId>org.openpnp</groupId>
