@@ -4,10 +4,11 @@
 """
 import cv2
 import os
+import math
 from config.config_operation import ConfigOperation
 
 
-def opencv_capture(input_file, output_path, frame_interval=5):
+def opencv_capture(input_file, output_path, frame_interval=5, config_file = ''):
     vc = cv2.VideoCapture(input_file)
     c = 0
     num = 0
@@ -15,6 +16,9 @@ def opencv_capture(input_file, output_path, frame_interval=5):
         rval, frame = vc.read()
     else:
         rval = False
+
+    major_ver, minor_ver, subminor_ver = cv2.__version__.split('.')
+    fps = vc.get(cv2.cv.CV_CAP_PROP_FPS) if int(major_ver) < 3 else vc.get(cv2.CAP_PROP_FPS)
 
     while rval:
         rval , frame = vc.read()
@@ -27,6 +31,22 @@ def opencv_capture(input_file, output_path, frame_interval=5):
         cv2.waitKey(1)
 
     vc.release()
+    actual_rate = int(math.ceil(fps))
+    # props = {'video.frame.rate': str(actual_rate)}
+    # if config_file != '':
+    #     ConfigOperation.write_config_file(config_file, props)
+    return actual_rate
+
+
+# 获取视频帧率
+def read_video_frame_rate(input_file):
+    vc = cv2.VideoCapture(input_file)
+    major_ver, minor_ver, subminor_ver = cv2.__version__.split('.')
+    # 版本号判断
+    fps = vc.get(cv2.cv.CV_CAP_PROP_FPS) if int(major_ver) < 3 else vc.get(cv2.CAP_PROP_FPS)
+    vc.release()
+    actual_rate = int(math.ceil(fps))
+    return actual_rate
 
 
 # def ffmpeg_capture(in_file, frame_num, output_path):
@@ -46,8 +66,8 @@ if __name__ == '__main__':
 
     params = ConfigOperation.read_config_file(config_file)
     print(params)
-    opencv_capture(params['vedio.input.path'], params['figure.output.path'],
-                   int(params['capture.frame.interval']))
+    opencv_capture(params['video.input.path'], params['figure.output.path'],
+                   int(params['capture.frame.interval']), config_file=config_file)
 
     # opencv_capture('E:\\video\\nanjing7.mp4', "E:\\video\\testx")
 
