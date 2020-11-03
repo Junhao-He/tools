@@ -37,7 +37,8 @@ def get_data_from_es(history_table, host, doc_type, query):
         try:
             es = Elasticsearch(host)
         except Exception as e:
-            print(e)
+            # print(e)
+            logging.error(e)
         indices = [history_table]
         doc = {
             "_source": ['uuid', 'fdfs_url', 'rt_feature', 'quality_score'],
@@ -84,7 +85,8 @@ def get_data_from_es(history_table, host, doc_type, query):
                 es_feature.append(base64_to_float(message['rt_feature']))
                 label_index += 1
             except:
-                print("Data error! {}".format(label_index))
+                # print("Data error! {}".format(label_index))
+                logging.error("Data error! {}".format(label_index))
         # Start scrolling
         while scroll_size > 0:
             # print ("Scrolling...")
@@ -107,16 +109,21 @@ def get_data_from_es(history_table, host, doc_type, query):
                     es_data.append(message)
                     es_feature.append(base64_to_float(message['rt_feature']))
                     label_index += 1
-                except KeyError:
-                    print("Field missing!")
+                except KeyError as e:
+                    # print("Field missing!")
+                    logging.error(e)
                 except Exception as e:
-                    print(e)
+                    # print(e)
+                    logging.error(e)
 
-        print('Data amount: {}'.format(len(es_data)))
-        print('Query data amount:{}'.format(len(searched_data)))
+        # print('Data amount: {}'.format(len(es_data)))
+        logging.info('Data amount: {}'.format(len(es_data)))
+        # print('Query data amount:{}'.format(len(searched_data)))
+        logging.info('Query data amount:{}'.format(len(searched_data)))
         return es_data, searched_data, es_feature, searched_feature
-    except ConnectionError:
-        print("Error in downloading data!")
+    except ConnectionError as e:
+        logging.error(e)
+        # print("Error in downloading data!")
 
 
 def base64_to_float(kb_feature):
@@ -172,8 +179,10 @@ def download_fdfs(dst_dir_list, fdfs_dir_list):
         elif type(fdfs_dir) == str:
             client.download_to_file(dst_dir, bytes(fdfs_dir, encoding='utf-8'))
         else:
-            print('fdfs_dir is illegal!')
-    print('Download completed!')
+            logging.warning('fdfs_dir is illegal!')
+            # print('fdfs_dir is illegal!')
+    # print('Download completed!')
+    logging.info('Download completed!')
 
 
 def save2json(dic, filename):
@@ -187,7 +196,8 @@ def save2json(dic, filename):
         with codecs.open(filename, 'a', 'utf-8') as file:
             file.write(data)
     except:
-        print("Failed！")
+        logging.error("Failed!")
+        # print("Failed！")
 
 
 def save_files(labels, distances, es_data, search_data, thr, dst_dir):
@@ -211,7 +221,8 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
     client = Fdfs_client(tracker_path)
     for index in range(len(labels)):
         if index % 100 == 0:
-            print("Downloading files :{}".format(index))
+            logging.info("Downloading files :{}".format(index))
+            # print("Downloading files :{}".format(index))
         label = labels[index]
         distance = distances[index]
         uuid = search_data[index]['uuid']
@@ -238,14 +249,23 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
 def get_date_today():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
-    return [str(today)+' 00:00:00', str(yesterday)+' 00:00:00']
+    return [str(yesterday)+' 00:00:00', str(today)+' 00:00:00']
 
 
 if __name__ == '__main__':
     s_time = time.time()
 
+    LOG_FORMAT = "%(asctime)s %(name)s %(levelname)s %(message)s "  # 配置输出日志格式
+    DATE_FORMAT = '%Y-%m-%d  %H:%M:%S'  # 配置输出时间的格式
+    logging.basicConfig(level=logging.DEBUG,
+                        format=LOG_FORMAT,
+                        datefmt=DATE_FORMAT,
+                        filename=r"./log/similarity_search.log"
+                        )
+
     config = configparser.ConfigParser()
-    print("- Load config file")
+    # print("- Load config file")
+    logging.info("- Load config file")
     config.read("./config.ini")
     history_table = config['ES.org']['history_table']
     host = config['ES.org']['host']
@@ -259,16 +279,20 @@ if __name__ == '__main__':
 
     es_data, search_data, label_feature, search_feature = get_data_from_es(history_table, host, doc_type, query)
     read_time = time.time()
-    print("Reading file costs: {}s".format(read_time - s_time))
+    # print("Reading file costs: {}s".format(read_time - s_time))
+    logging.info("Reading file costs: {}s".format(read_time - s_time))
     if len(search_data) > 0:
         labels, distances = annsearch(search_feature, label_feature, neighbor_amount)
         # print(labels[:10])
         # print(distances[:10])
         search_time = time.time()
-        print("Searching costs: {}s".format(search_time - read_time))
+        # print("Searching costs: {}s".format(search_time - read_time))
+        logging.info("Searching costs: {}s".format(search_time - read_time))
         # print(distances[:10])
         save_files(labels, distances, es_data, search_data, distance_threshold, dst_dir)
         download_time = time.time()
-        print("Downloading costs: {}s".format(download_time - search_time))
+        # print("Downloading costs: {}s".format(download_time - search_time))
+        logging.info("Downloading costs: {}s".format(download_time - search_time))
     else:
-        print("No data get!!!")
+        logging.warning("No data get!!!")
+        # print("No data get!!!")
