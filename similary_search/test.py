@@ -68,6 +68,9 @@ def get_data_from_ES(name, es_name, doc_type, query=[]):
 if __name__ == '__main__':
     # data = get_data_from_ES('history_fss_data_cq_similary_search', '10.45.154.218', 'history_data')
     # print(data[0])
-    import time
-    time.time()
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(1604364860564)))
+    import time, datetime
+    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
+    today = datetime.date.today()
+    print(today)
+    oneday = datetime.timedelta(days=1)
+    print(str(today - oneday)+' 00:00:00')

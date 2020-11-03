@@ -14,6 +14,7 @@ import base64
 import struct
 import os
 import time
+import datetime
 import json
 import codecs
 from fdfs_client.client import Fdfs_client, get_tracker_conf
@@ -117,114 +118,6 @@ def get_data_from_es(history_table, host, doc_type, query):
     except ConnectionError:
         print("Error in downloading data!")
 
-# def get_data_from_es(history_table, host, doc_type, query):
-#     """根据时间读取es数据
-#     Arg:
-#         history_table (:string), 数据表名
-#         host (:list), 数据所在host
-#         doc_type (:string), index对应type
-#         query (:list), 时间查询条件
-#     Return:
-#         es_data: 全量数据
-#         searched_data: 满足质量分阈值待比对数据
-#         es_feature: 全量特征
-#         searched_feature: 满足质量分阈值待比对特征
-#     """
-#     try:
-#         es = Elasticsearch(host)
-#     except:
-#         print("Connect to es error!")
-#         return None
-#     indices = [history_table]
-#     doc = {
-#         "_source": ['uuid', 'img_url', 'rt_feature', 'quality_score'],
-#             "query": {
-#                 "bool": {
-#                     "must": [{"range": {"enter_time": {"gte": query[0], "lte": query[1],
-#                                                        "format": "yyyy-MM-dd HH:mm:ss", "time_zone": "+08:00"}}}
-#                              # {"range": {"quality_score": {"gte": quality_threshold}}}
-#                              ]
-#                 }
-#             }
-#     }
-#
-#     # Initialize the scroll
-#     page1 = es.search(
-#             index=','.join(indices),
-#             doc_type=doc_type,
-#             scroll='2m',
-#             # search_type='scan',
-#             sort='_doc',
-#             size=1000,
-#             body=doc
-#     )
-#     sid = page1['_scroll_id']
-#     scroll_size = page1['hits']['total']
-#     # print('total scroll_size: ', scroll_size)
-#
-#     es_data = []
-#     es_feature = []
-#     searched_data = []
-#     searched_feature = []
-#     docs = page1['hits']['hits']
-#     label_index = 0
-#     query_index = 0
-#     for message in docs:
-#         try:
-#             message = message['_source']
-#             message_info = dict()
-#             message_info['uuid'] = message['uuid']
-#             message_info['img_url'] = message['fdfs_url']
-#             message_info['rt_feature'] = message['rt_feature']
-#             message_info['quality_score'] = message['quality_score']
-#             message_info['index'] = label_index
-#             if message['quality_score'] > quality_threshold:
-#                 message_info['index'] = query_index
-#                 searched_data.append(message_info)
-#                 searched_feature.append(base64_to_float(message['rt_feature']))
-#                 query_index += 1
-#             es_data.append(message_info)
-#             es_feature.append(base64_to_float(message['rt_feature']))
-#             label_index += 1
-#         except:
-#             print("Data error! {}".format(label_index))
-#     # Start scrolling
-#     while scroll_size > 0:
-#         # print ("Scrolling...")
-#         page = es.scroll(scroll_id=sid, scroll='2m')
-#         # Update the scroll ID
-#         sid = page['_scroll_id']
-#         # Get the number of results that we returned in the last scroll
-#         scroll_size = len(page['hits']['hits'])
-#         # print ("scroll size: " + str(scroll_size))
-#         # Do something with the obtained page
-#         docs = page['hits']['hits']
-#         for message in docs:
-#             try:
-#                 message = message['_source']
-#                 message_info = dict()
-#                 message_info['uuid'] = message['uuid']
-#                 message_info['img_url'] = message['fdfs_url']
-#                 message_info['rt_feature'] = message['rt_feature']
-#                 message_info['quality_score'] = message['quality_score']
-#                 message_info['index'] = label_index
-#                 if message['quality_score'] > quality_threshold:
-#                     message_info['index'] = query_index
-#                     searched_data.append(message_info)
-#                     searched_feature.append(base64_to_float(message['rt_feature']))
-#                     query_index += 1
-#                 es_data.append(message_info)
-#                 es_feature.append(base64_to_float(message['rt_feature']))
-#                 label_index += 1
-#             except KeyError:
-#                 print("Field missing!")
-#             except Exception as e:
-#                 print(e)
-#
-#     print('Data amount: {}'.format(len(es_data)))
-#     print('Query data amount:{}'.format(len(searched_data)))
-#     return es_data, searched_data, es_feature, searched_feature
-
 
 def base64_to_float(kb_feature):
     # 二进制特征转化为float矩阵
@@ -317,6 +210,8 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
     tracker_path = get_tracker_conf('./fdfs_client.conf')
     client = Fdfs_client(tracker_path)
     for index in range(len(labels)):
+        if index % 100 == 0:
+            print("Downloading files :{}".format(index))
         label = labels[index]
         distance = distances[index]
         uuid = search_data[index]['uuid']
@@ -340,6 +235,12 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
     save2json(infos, dir_today+'/'+time.strftime("%Y-%m-%d", time.localtime())+'.json')
 
 
+def get_date_today():
+    today = datetime.date.today()
+    yesterday = today - datetime.timedelta(days=1)
+    return [str(today)+' 00:00:00', str(yesterday)+' 00:00:00']
+
+
 if __name__ == '__main__':
     s_time = time.time()
 
@@ -350,6 +251,7 @@ if __name__ == '__main__':
     host = config['ES.org']['host']
     doc_type = config['ES.org']['type']
     query = ['2020-10-20 06:10:21', '2020-10-30 06:10:21']
+    # query = get_date_today()
     quality_threshold = float(config['INFO.org']['quality_threshold'])
     neighbor_amount = int(config['INFO.org']['neighbor_amount'])
     distance_threshold = float(config['INFO.org']['distance_threshold'])
