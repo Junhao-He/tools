@@ -1,3 +1,28 @@
+1、执行命令运行工具
+python similar_search.py
+
+2、相关参数配置见config.ini
+[DEFAULT]
+[ES.org]
+;ES相关配置 
+;数据索引对应host 
+host = 10.45.154.148
+;ES数据表名称
+history_table = history_fss_data_cq_similary_search
+;ES表type
+type = history_data
+[INFO.org]
+;图片质量过滤阈值
+quality_threshold = 55
+;图片相似度阈值
+distance_threshold = 1
+;图片存放目录 默认当前文件夹
+dst_dir = ./
+;最近邻搜索数目
+neighbor_amount = 10
+
+3、fdfs配置见fdfs_client.conf
+（注：无其他要求只需修改tracker_server）
 # connect timeout in seconds
 # default value is 30s
 connect_timeout=0.1
@@ -11,7 +36,7 @@ base_path=/fastdfs/tracker
 
 # tracker_server can ocur more than once, and tracker_server format is
 # "host:port", host can be hostname or ip address
-tracker_server=10.45.154.182:22122
+tracker_server=10.45.154.218:22122
 # tracker_server=10.72.76.39:22122
 
 #standard log level as syslog, case insensitive, value list:

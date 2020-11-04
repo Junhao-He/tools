@@ -41,26 +41,26 @@ def get_data_from_es(history_table, host, doc_type, query):
             logging.error(e)
         indices = [history_table]
         doc = {
-            "_source": ['uuid', 'fdfs_url', 'rt_feature', 'quality_score'],
-                "query": {
-                    "bool": {
-                        "must": [{"range": {"enter_time": {"gte": query[0], "lte": query[1],
-                                                           "format": "yyyy-MM-dd HH:mm:ss", "time_zone": "+08:00"}}}
-                                 # {"range": {"quality_score": {"gte": quality_threshold}}}
-                                 ]
-                    }
+            "_source": ['uuid', 'img_url', 'rt_feature', 'quality_score'],
+            "query": {
+                "bool": {
+                    "must": [{"range": {"enter_time": {"gte": query[0], "lte": query[1],
+                                                       "format": "yyyy-MM-dd HH:mm:ss", "time_zone": "+08:00"}}}
+                             # {"range": {"quality_score": {"gte": quality_threshold}}}
+                             ]
                 }
+            }
         }
 
         # Initialize the scroll
         page1 = es.search(
-                index=','.join(indices),
-                doc_type=doc_type,
-                scroll='2m',
-                # search_type='scan',
-                sort='_doc',
-                size=1000,
-                body=doc
+            index=','.join(indices),
+            doc_type=doc_type,
+            scroll='2m',
+            # search_type='scan',
+            sort='_doc',
+            size=1000,
+            body=doc
         )
         sid = page1['_scroll_id']
         scroll_size = page1['hits']['total']
@@ -76,7 +76,8 @@ def get_data_from_es(history_table, host, doc_type, query):
         for message in docs:
             try:
                 message = message['_source']
-                if message['quality_score'] > quality_threshold:
+                if message['quality_score'] > quality_threshold1 or \
+                        (quality_threshold2 < message['quality_score'] < 1):
                     # message_info['index'] = query_index
                     searched_data.append(message)
                     searched_feature.append(base64_to_float(message['rt_feature']))
@@ -101,7 +102,8 @@ def get_data_from_es(history_table, host, doc_type, query):
             for message in docs:
                 try:
                     message = message['_source']
-                    if message['quality_score'] > quality_threshold:
+                    if message['quality_score'] > quality_threshold1 or \
+                            (quality_threshold2 < message['quality_score'] < 1):
                         # message_info['index'] = query_index
                         searched_data.append(message)
                         searched_feature.append(base64_to_float(message['rt_feature']))
@@ -139,7 +141,7 @@ def base64_to_float(kb_feature):
 
 def cos(f1, f2):
     # 计算向量余弦相似度
-    return np.dot(f1, f2)/(np.linalg.norm(f1)*np.linalg.norm(f2))
+    return np.dot(f1, f2) / (np.linalg.norm(f1) * np.linalg.norm(f2))
 
 
 def annsearch(data, data_labels, neighbor_amount):
@@ -213,7 +215,7 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
         labels: 相似向量索引
         distances: 相似评分
     """
-    dir_today = dst_dir+'/'+time.strftime("%Y-%m-%d", time.localtime())
+    dir_today = dst_dir + '/' + time.strftime("%Y-%m-%d", time.localtime())
     if not os.path.exists(dir_today):
         os.mkdir(dir_today)
     infos = dict()
@@ -222,12 +224,12 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
     for index in range(len(labels)):
         if index % 100 == 0:
             logging.info("Downloading files :{}".format(index))
-            # print("Downloading files :{}".format(index))
+            print("Downloading files :{}".format(index))
         label = labels[index]
         distance = distances[index]
         uuid = search_data[index]['uuid']
         infos[uuid] = []
-        index_dir = dir_today+'/'+uuid
+        index_dir = dir_today + '/' + uuid
         if not os.path.exists(index_dir):
             os.mkdir(index_dir)
         for i in range(len(distance)):
@@ -236,20 +238,20 @@ def save_files(labels, distances, es_data, search_data, thr, dst_dir):
                 try:
                     infos[uuid].append(es_data[label[i]])
                     # print(es_data[label[i]]['uuid'])
-                    client.download_to_file(index_dir+'/'+es_data[label[i]]['uuid']+'.jpg',
-                                            bytes(es_data[label[i]]['fdfs_url'], encoding="utf8"))
+                    client.download_to_file(index_dir + '/' + es_data[label[i]]['uuid'] + '.jpg',
+                                            bytes(es_data[label[i]]['img_url'][10:], encoding="utf8"))
                 except:
                     # print("Downloading error! {}".format(es_data[label[i]]['uuid']))
                     continue
                 # finally:
                 #     print("Downloading costs: {}s".format(time.time() - ss))
-    save2json(infos, dir_today+'/'+time.strftime("%Y-%m-%d", time.localtime())+'.json')
+    save2json(infos, dir_today + '/' + time.strftime("%Y-%m-%d", time.localtime()) + '.json')
 
 
 def get_date_today():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
-    return [str(yesterday)+' 00:00:00', str(today)+' 00:00:00']
+    return [str(yesterday) + ' 00:00:00', str(today) + ' 00:00:00']
 
 
 if __name__ == '__main__':
@@ -257,7 +259,9 @@ if __name__ == '__main__':
 
     LOG_FORMAT = "%(asctime)s %(name)s %(levelname)s %(message)s "  # 配置输出日志格式
     DATE_FORMAT = '%Y-%m-%d  %H:%M:%S'  # 配置输出时间的格式
-    logging.basicConfig(level=logging.DEBUG,
+    if not os.path.exists("./log"):
+        os.mkdir("./log")
+    logging.basicConfig(level=logging.INFO,
                         format=LOG_FORMAT,
                         datefmt=DATE_FORMAT,
                         filename=r"./log/similarity_search.log"
@@ -272,7 +276,8 @@ if __name__ == '__main__':
     doc_type = config['ES.org']['type']
     query = ['2020-10-20 06:10:21', '2020-10-30 06:10:21']
     # query = get_date_today()
-    quality_threshold = float(config['INFO.org']['quality_threshold'])
+    quality_threshold1 = float(config['INFO.org']['quality_threshold_1'])
+    quality_threshold2 = float(config['INFO.org']['quality_threshold_2'])
     neighbor_amount = int(config['INFO.org']['neighbor_amount'])
     distance_threshold = float(config['INFO.org']['distance_threshold'])
     dst_dir = config['INFO.org']['dst_dir']

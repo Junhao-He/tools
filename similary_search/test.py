@@ -68,9 +68,18 @@ def get_data_from_ES(name, es_name, doc_type, query=[]):
 if __name__ == '__main__':
     # data = get_data_from_ES('history_fss_data_cq_similary_search', '10.45.154.218', 'history_data')
     # print(data[0])
-    import time, datetime
-    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
-    today = datetime.date.today()
-    print(today)
-    oneday = datetime.timedelta(days=1)
-    print(str(today - oneday)+' 00:00:00')
+
+    # import time, datetime
+    # print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
+    # today = datetime.date.today()
+    # print(today)
+    # oneday = datetime.timedelta(days=1)
+    # print(str(today - oneday)+' 00:00:00')
+
+    from fdfs_client.client import Fdfs_client, get_tracker_conf
+    tracker_path = get_tracker_conf('./fdfs_client.conf')
+    client = Fdfs_client(tracker_path)
+    ss = '/ZNVFSIMG/group1/M00/00/01/Ci2atl-ZO8aIDzZTAAAsuYMgRxsAAAAcgLuf0IAACzR071.jpg'
+    print(ss[10:])
+    client.download_to_file('./12345.jpg',
+                            bytes(ss[10:], encoding="utf8"))
