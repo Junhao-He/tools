@@ -1,21 +1,22 @@
 1、执行命令运行工具
-python similar_search.py
+python similarity_search.py
 
 2、相关参数配置见config.ini
 [DEFAULT]
 [ES.org]
 ;ES相关配置 
 ;数据索引对应host 
-host = 10.45.154.148
+host = 10.45.154.161
 ;ES数据表名称
-history_table = history_fss_data_cq_similary_search
+history_table = vpa_history_data_v1_00_001-0
 ;ES表type
 type = history_data
 [INFO.org]
-;图片质量过滤阈值
-quality_threshold = 55
+;图片质量过滤阈值(可能存在[0,1] [0,100]两种质量分体系)
+quality_threshold_1 = 55
+quality_threshold_2 = 0.7
 ;图片相似度阈值
-distance_threshold = 1
+distance_threshold = 0.8
 ;图片存放目录 默认当前文件夹
 dst_dir = ./
 ;最近邻搜索数目
